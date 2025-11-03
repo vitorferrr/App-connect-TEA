@@ -5,16 +5,16 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { FileText, CalendarDays, Newspaper } from "lucide-react";
 import BottomNavBar from "@/components/BottomNavBar";
-import AppHeader from "@/components/AppHeader"; // Importar o novo cabeçalho
+import AppHeader from "@/components/AppHeader";
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-appBgLight pb-16"> {/* Ajustado pb para a altura da nav bar */}
-      <AppHeader /> {/* Usar o novo componente de cabeçalho */}
+    <div className="min-h-screen flex flex-col bg-appBgLight pb-16">
+      <AppHeader />
 
       <main className="flex-grow flex flex-col items-center justify-center space-y-6 p-4">
         <Link to="/reports" className="w-full max-w-xs">
-          <Button className="w-full h-36 text-white bg-appBlueMedium hover:bg-appBlueDark flex items-center justify-start rounded-2xl shadow-md p-4">
+          <Button className="w-full h-36 text-white bg-appBlueDark hover:bg-blue-900 flex items-center justify-start rounded-2xl shadow-md p-4">
             <FileText className="h-12 w-12 mr-4" />
             <div className="flex flex-col items-start gap-1">
               <span className="text-2xl font-semibold">Relatórios</span>
