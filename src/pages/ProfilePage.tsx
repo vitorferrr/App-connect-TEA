@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail, Phone, Settings, LogOut } from "lucide-react";
+import { ArrowLeft, Mail, Phone, Settings, LogOut, Eye, EyeOff } from "lucide-react"; // Importando Eye e EyeOff
 import BottomNavBar from "@/components/BottomNavBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -21,6 +21,7 @@ interface Profile {
 const ProfilePage = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showEmail, setShowEmail] = useState(false); // Novo estado para controlar a visibilidade do e-mail
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -119,12 +120,24 @@ const ProfilePage = () => {
         <Card className="w-full p-6 shadow-md">
           <CardTitle className="text-lg font-semibold text-gray-800 mb-4">Informações pessoais</CardTitle>
           <CardContent className="p-0 space-y-4">
-            <div className="flex items-center">
-              <Mail className="h-5 w-5 text-blue-600 mr-3" />
-              <div>
-                <p className="text-sm text-gray-600">Email</p>
-                <p className="font-medium text-gray-800">{profile.email}</p>
+            <div className="flex items-center justify-between"> {/* Adicionado justify-between */}
+              <div className="flex items-center">
+                <Mail className="h-5 w-5 text-blue-600 mr-3" />
+                <div>
+                  <p className="text-sm text-gray-600">Email</p>
+                  <p className="font-medium text-gray-800">
+                    {showEmail ? profile.email : "********"} {/* Oculta/mostra o e-mail */}
+                  </p>
+                </div>
               </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowEmail(!showEmail)} // Alterna a visibilidade
+                className="text-gray-500 hover:text-gray-700"
+              >
+                {showEmail ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </Button>
             </div>
             <div className="flex items-center">
               <Phone className="h-5 w-5 text-blue-600 mr-3" />
