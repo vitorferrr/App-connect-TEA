@@ -16,7 +16,7 @@ const BottomNavBar = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-appBlueDark p-2 flex justify-around items-center z-50 md:hidden h-16">
+    <nav className="fixed bottom-0 left-0 right-0 bg-appBlueDark p-2 flex justify-around items-center z-50 h-16"> {/* Removido md:hidden */}
       {navItems.map((item) => {
         const isActive = location.pathname === item.path;
         const IconComponent = item.icon;
