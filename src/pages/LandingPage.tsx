@@ -3,7 +3,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { User, Lock, Puzzle } from "lucide-react"; // Importando Puzzle para o ícone
+import { User, Puzzle } from "lucide-react"; // Removendo Lock, pois o botão de cadastro será removido
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 const LandingPage = () => {
@@ -11,7 +11,7 @@ const LandingPage = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
       <div className="text-center mb-8">
         {/* Ícone de quebra-cabeça simbolizando a inclusão autista */}
-        <Puzzle className="h-24 w-24 mx-auto mb-4 text-blue-600" /> 
+        <img src="/app-logo-new.png" alt="Connect TEA Logo" className="h-24 w-24 mx-auto mb-4" /> 
         <h1 className="text-4xl font-bold text-blue-800 mb-2">Connect TEA</h1>
       </div>
 
@@ -21,11 +21,7 @@ const LandingPage = () => {
             <User className="h-6 w-6 mr-2" /> Login
           </Button>
         </Link>
-        <Link to="/register">
-          <Button className="w-full h-12 bg-appBlueDark hover:bg-blue-900 text-white text-lg flex items-center justify-center rounded-full shadow-md">
-            <Lock className="h-6 w-6 mr-2" /> Cadastre-se
-          </Button>
-        </Link>
+        {/* Botão de Cadastre-se removido, pois já existe um link abaixo */}
         <GoogleSignInButton>
           Conectar com o Google
         </GoogleSignInButton>
