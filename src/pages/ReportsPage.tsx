@@ -18,7 +18,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+}
+from "@/components/ui/select";
 import { parse, subMonths, isAfter, isValid } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
@@ -126,8 +127,12 @@ const ReportsPage = () => {
           </Link>
           <h1 className="text-2xl font-bold text-blue-700 ml-4">Relatórios de Hugo</h1>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => setIsAddReportDialogOpen(true)}>
-          <PlusCircle className="h-6 w-6 text-blue-700" />
+        <Button
+          onClick={() => setIsAddReportDialogOpen(true)}
+          className="bg-appBlueMedium hover:bg-appBlueDark text-white px-4 py-2 rounded-full flex items-center gap-2"
+        >
+          <PlusCircle className="h-5 w-5" />
+          Adicionar Relatório
         </Button>
       </header>
 
