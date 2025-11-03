@@ -13,9 +13,6 @@ const HomePage = () => {
       <AppHeader />
 
       <main className="flex-grow flex flex-col items-center justify-center space-y-6 p-4">
-        <p className="text-lg text-gray-700 text-center max-w-xs mb-4">
-          Acompanhe o desenvolvimento do seu filho(a) e mantenha-se conectado(a) com a escola.
-        </p>
         <Link to="/reports" className="w-full max-w-xs">
           <Button className="w-full h-36 text-white bg-appBlueDark hover:bg-blue-900 flex items-center justify-start rounded-2xl shadow-md p-4">
             <FileText className="h-12 w-12 mr-4" />

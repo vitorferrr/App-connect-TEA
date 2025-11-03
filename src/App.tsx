@@ -13,8 +13,7 @@ import CalendarPage from "./pages/CalendarPage";
 import NewsPage from "./pages/NewsPage";
 import ChatPage from "./pages/ChatPage";
 import ProfilePage from "./pages/ProfilePage";
-import SettingsPage from "./pages/SettingsPage";
-import NotificationsPage from "./pages/NotificationsPage"; // Importando a nova página de notificações
+import SettingsPage from "./pages/SettingsPage"; // Importando a nova página de configurações
 import { SessionProvider } from "./components/SessionProvider"; // New SessionProvider
 
 const queryClient = new QueryClient();
@@ -36,8 +35,7 @@ const App = () => (
             <Route path="/news" element={<NewsPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/notifications" element={<NotificationsPage />} /> {/* Nova rota para notificações */}
+            <Route path="/settings" element={<SettingsPage />} /> {/* Nova rota para configurações */}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

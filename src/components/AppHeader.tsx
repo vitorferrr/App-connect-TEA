@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-import { Puzzle, Bell } from "lucide-react"; // Importando Bell
-import { Link } from "react-router-dom"; // Importando Link para navegação
-import { Button } from "@/components/ui/button"; // Importando Button
+import { Puzzle } from "lucide-react";
 
 const AppHeader = () => {
   return (
@@ -12,14 +10,7 @@ const AppHeader = () => {
         <Puzzle className="h-8 w-8 mr-2" />
         <h1 className="text-2xl font-bold">Connect TEA</h1>
       </div>
-      <div className="flex items-center">
-        <p className="text-lg mr-4 hidden sm:block">👋 Olá, Maria! Como vai hoje?</p> {/* Oculta em telas pequenas */}
-        <Link to="/notifications">
-          <Button variant="ghost" size="icon" className="text-white hover:bg-appBlueMedium">
-            <Bell className="h-6 w-6" />
-          </Button>
-        </Link>
-      </div>
+      <p className="text-lg">👋 Olá, Maria! Como vai hoje?</p>
     </header>
   );
 };
