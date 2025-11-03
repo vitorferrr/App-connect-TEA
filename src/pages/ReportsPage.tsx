@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -12,8 +12,24 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { parse, subMonths, isAfter, isValid } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-const reportsData = [
+interface Report {
+  id: string;
+  title: string;
+  date: string;
+  content: string;
+}
+
+const rawReportsData: Report[] = [
   {
     id: "report-1",
     title: "Relatório de Interação Social - Semana 1",
@@ -42,9 +58,56 @@ const reportsData = [
     content:
       "Foi introduzido um sistema de 'cartões de conversa' para Hugo, com sugestões de frases para iniciar e manter diálogos. Ele utilizou os cartões em duas ocasiões, resultando em interações mais longas e com menos ansiedade. Os resultados são promissores para o desenvolvimento de suas habilidades sociais.",
   },
+  {
+    id: "report-5",
+    title: "Relatório de Interação Social - Setembro",
+    date: "10 de Setembro de 2024",
+    content: "Relatório mais antigo sobre interações sociais de Hugo.",
+  },
+  {
+    id: "report-6",
+    title: "Relatório de Progresso - Agosto",
+    date: "20 de Agosto de 2024",
+    content: "Relatório de progresso geral de Hugo.",
+  },
 ];
 
+// Helper function to parse Brazilian date format
+const parseBrazilianDate = (dateString: string): Date | null => {
+  const parsedDate = parse(dateString, "dd 'de' MMMM 'de' yyyy", new Date(), { locale: ptBR });
+  return isValid(parsedDate) ? parsedDate : null;
+};
+
 const ReportsPage = () => {
+  const [selectedFilter, setSelectedFilter] = useState("recent"); // Default filter
+
+  const reportsWithParsedDates = useMemo(() => {
+    return rawReportsData.map(report => ({
+      ...report,
+      parsedDate: parseBrazilianDate(report.date),
+    }));
+  }, []);
+
+  const filteredAndSortedReports = useMemo(() => {
+    let filtered = reportsWithParsedDates;
+    const now = new Date();
+
+    if (selectedFilter === "3months") {
+      const threeMonthsAgo = subMonths(now, 3);
+      filtered = filtered.filter(report => report.parsedDate && isAfter(report.parsedDate, threeMonthsAgo));
+    } else if (selectedFilter === "6months") {
+      const sixMonthsAgo = subMonths(now, 6);
+      filtered = filtered.filter(report => report.parsedDate && isAfter(report.parsedDate, sixMonthsAgo));
+    }
+    // "all" and "recent" don't need initial filtering based on date range
+
+    // Always sort from most recent to oldest
+    return filtered.sort((a, b) => {
+      if (!a.parsedDate || !b.parsedDate) return 0; // Handle cases where date parsing failed
+      return b.parsedDate.getTime() - a.parsedDate.getTime();
+    });
+  }, [selectedFilter, reportsWithParsedDates]);
+
   return (
     <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
       <header className="py-4 flex items-center">
@@ -61,26 +124,44 @@ const ReportsPage = () => {
           Acompanhe o desenvolvimento de Hugo na escola.
         </p>
 
+        <div className="w-full flex justify-end mb-4">
+          <Select onValueChange={setSelectedFilter} defaultValue={selectedFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filtrar por período" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="recent">Mais recente</SelectItem>
+              <SelectItem value="3months">Últimos 3 meses</SelectItem>
+              <SelectItem value="6months">Últimos 6 meses</SelectItem>
+              <SelectItem value="all">Todos</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <Card className="w-full">
           <CardHeader>
             <CardTitle className="text-xl text-blue-800">Relatórios Recentes</CardTitle>
           </CardHeader>
           <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              {reportsData.map((report) => (
-                <AccordionItem key={report.id} value={report.id}>
-                  <AccordionTrigger className="text-left text-base font-medium text-gray-800 hover:no-underline">
-                    <div className="flex flex-col items-start">
-                      <span>{report.title}</span>
-                      <span className="text-sm text-gray-500 font-normal">{report.date}</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-700 text-sm p-2 border-t mt-2 pt-2">
-                    {report.content}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            {filteredAndSortedReports.length > 0 ? (
+              <Accordion type="single" collapsible className="w-full">
+                {filteredAndSortedReports.map((report) => (
+                  <AccordionItem key={report.id} value={report.id}>
+                    <AccordionTrigger className="text-left text-base font-medium text-gray-800 hover:no-underline">
+                      <div className="flex flex-col items-start">
+                        <span>{report.title}</span>
+                        <span className="text-sm text-gray-500 font-normal">{report.date}</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="text-gray-700 text-sm p-2 border-t mt-2 pt-2">
+                      {report.content}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            ) : (
+              <p className="text-center text-gray-500">Nenhum relatório encontrado para o período selecionado.</p>
+            )}
           </CardContent>
         </Card>
       </main>
