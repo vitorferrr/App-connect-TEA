@@ -3,7 +3,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { FileText, CalendarDays, Newspaper } from "lucide-react";
+import { FileText, CalendarDays, Newspaper, Bell } from "lucide-react"; // Importando Bell
 import BottomNavBar from "@/components/BottomNavBar";
 import AppHeader from "@/components/AppHeader";
 
@@ -41,6 +41,17 @@ const HomePage = () => {
           </Button>
         </Link>
       </main>
+
+      {/* Botão de Notificações Flutuante */}
+      <Link to="/notifications" className="fixed bottom-20 right-4 z-40">
+        <Button
+          variant="default"
+          size="icon"
+          className="h-14 w-14 rounded-full bg-appYellowActive hover:bg-yellow-600 text-appBlueDark shadow-lg"
+        >
+          <Bell className="h-7 w-7" />
+        </Button>
+      </Link>
 
       <BottomNavBar />
     </div>
