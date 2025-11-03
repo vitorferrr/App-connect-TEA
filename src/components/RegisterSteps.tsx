@@ -27,7 +27,7 @@ const RegisterSteps = () => {
     confirmPassword: "",
     firstName: "",
     lastName: "",
-    age: "",
+    age: "", // This field is used for phone_number in profiles table
     address: "",
     complement: "",
     childName: "",
@@ -39,9 +39,24 @@ const RegisterSteps = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Password validation states
+  const [hasMinLength, setHasMinLength] = useState(false);
+  const [hasSpecialChar, setHasSpecialChar] = useState(false);
+  const [hasUpperCase, setHasUpperCase] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
+
+    if (id === "password") {
+      validatePassword(value);
+    }
+  };
+
+  const validatePassword = (password: string) => {
+    setHasMinLength(password.length >= 8);
+    setHasSpecialChar(/[!@#$%^&*(),.?":{}|<>]/.test(password));
+    setHasUpperCase(/[A-Z]/.test(password));
   };
 
   const handleDateChange = (date: Date | undefined) => {
@@ -54,37 +69,41 @@ const RegisterSteps = () => {
       if (step === 1) {
         if (formData.email !== formData.confirmEmail) {
           toast.error("Os e-mails não coincidem.");
+          setLoading(false);
           return;
         }
         if (formData.password !== formData.confirmPassword) {
           toast.error("As senhas não coincidem.");
+          setLoading(false);
           return;
         }
-        if (formData.password.length < 6) {
-          toast.error("A senha deve ter no mínimo 6 caracteres.");
+        if (!hasMinLength || !hasSpecialChar || !hasUpperCase) {
+          toast.error("A senha não atende a todos os requisitos.");
+          setLoading(false);
           return;
         }
-        // Simulate signup to get email for OTP step, but actual confirmation will be later
+        
         const { data, error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
           options: {
             data: {
-              first_name: formData.firstName, // Will be updated in step 2
-              last_name: formData.lastName,   // Will be updated in step 2
-              user_type: 'responsavel', // Default user type
+              first_name: formData.firstName, 
+              last_name: formData.lastName,   
+              user_type: 'responsavel', 
             },
           },
         });
 
         if (error) {
           toast.error(error.message);
+          setLoading(false);
           return;
         }
 
         if (data.user && !data.session) {
           toast.success("Verifique seu e-mail para confirmar o cadastro. Um código foi enviado.");
-          setStep(step + 1); // Move to next step (OTP)
+          setStep(step + 1); 
         } else if (data.session) {
           toast.success("Cadastro e login realizados com sucesso!");
           navigate("/home");
@@ -92,13 +111,15 @@ const RegisterSteps = () => {
       } else if (step === 2) {
         if (!formData.firstName || !formData.lastName || !formData.age || !formData.address) {
           toast.error("Por favor, preencha todos os campos obrigatórios.");
+          setLoading(false);
           return;
         }
-        // Update profile with parent info
+        
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         if (userError || !user) {
           toast.error("Erro ao obter usuário. Por favor, faça login novamente.");
           navigate("/login");
+          setLoading(false);
           return;
         }
 
@@ -107,26 +128,28 @@ const RegisterSteps = () => {
           .update({
             first_name: formData.firstName,
             last_name: formData.lastName,
-            phone_number: formData.age, // Using age field for phone number as per image, will adjust schema if needed
-            // address and complement are not directly in profiles table, would need a separate table or custom field
+            phone_number: formData.age, 
           })
           .eq('id', user.id);
 
         if (updateError) {
           toast.error(updateError.message);
+          setLoading(false);
           return;
         }
         setStep(step + 1);
       } else if (step === 3) {
         if (!formData.childName || !formData.childDob || !formData.schoolName || !formData.className) {
           toast.error("Por favor, preencha todos os campos obrigatórios.");
+          setLoading(false);
           return;
         }
-        // Update profile with child info
+        
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         if (userError || !user) {
           toast.error("Erro ao obter usuário. Por favor, faça login novamente.");
           navigate("/login");
+          setLoading(false);
           return;
         }
 
@@ -134,7 +157,7 @@ const RegisterSteps = () => {
           .from('profiles')
           .update({
             child_name: formData.childName,
-            child_dob: formData.childDob.toISOString().split('T')[0], // Format to YYYY-MM-DD
+            child_dob: formData.childDob.toISOString().split('T')[0], 
             school_name: formData.schoolName,
             class_name: formData.className,
           })
@@ -142,6 +165,7 @@ const RegisterSteps = () => {
 
         if (updateError) {
           toast.error(updateError.message);
+          setLoading(false);
           return;
         }
         setStep(step + 1);
@@ -167,9 +191,6 @@ const RegisterSteps = () => {
   const handleFinalizeRegistration = async () => {
     setLoading(true);
     try {
-      // In a real scenario, this would be the final commit or confirmation.
-      // Since we've been updating the profile in previous steps,
-      // this can just navigate to home.
       toast.success("Cadastro finalizado com sucesso!");
       navigate("/home");
     } catch (error: any) {
@@ -178,6 +199,13 @@ const RegisterSteps = () => {
       setLoading(false);
     }
   };
+
+  const PasswordRequirement = ({ met, text }: { met: boolean; text: string }) => (
+    <p className={cn("text-xs flex items-center gap-1", met ? "text-green-600" : "text-red-500")}>
+      {met ? <CheckCircle2 className="h-3 w-3" /> : <span className="h-3 w-3 inline-block text-center">-</span>}
+      {text}
+    </p>
+  );
 
   const renderStepContent = () => {
     switch (step) {
@@ -195,11 +223,11 @@ const RegisterSteps = () => {
             <div className="grid gap-2">
               <Label htmlFor="password">Senha *</Label>
               <Input id="password" type="password" placeholder="Ex: Porta12@" required value={formData.password} onChange={handleChange} />
-              <p className="text-xs text-red-500">
-                - Mínimo de 8 caracteres<br />
-                - Pelo menos 1 Caractere especial (!@#$)<br />
-                - Pelo menos 1 letra maiúscula
-              </p>
+              <div className="mt-1 space-y-1">
+                <PasswordRequirement met={hasMinLength} text="Mínimo de 8 caracteres" />
+                <PasswordRequirement met={hasSpecialChar} text="Pelo menos 1 Caractere especial (!@#$)" />
+                <PasswordRequirement met={hasUpperCase} text="Pelo menos 1 letra maiúscula" />
+              </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
@@ -219,8 +247,8 @@ const RegisterSteps = () => {
               <Input id="lastName" type="text" placeholder="Ex: Silva" required value={formData.lastName} onChange={handleChange} />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="age">Idade *</Label>
-              <Input id="age" type="number" placeholder="Ex: 35" required value={formData.age} onChange={handleChange} />
+              <Label htmlFor="age">Telefone *</Label> {/* Changed label to Telefone */}
+              <Input id="age" type="text" placeholder="Ex: (XX) XXXXX-XXXX" required value={formData.age} onChange={handleChange} />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="address">Endereço *</Label>
@@ -304,7 +332,7 @@ const RegisterSteps = () => {
             <p><strong>E-mail:</strong> {formData.email}</p>
             <p><strong>Senha:</strong> ********</p>
             <p><strong>Nome Completo da Mãe:</strong> {formData.firstName} {formData.lastName}</p>
-            <p><strong>Idade:</strong> {formData.age}</p>
+            <p><strong>Telefone:</strong> {formData.age}</p> {/* Changed label to Telefone */}
             <p><strong>Endereço:</strong> {formData.address}</p>
             {formData.complement && <p><strong>Complemento:</strong> {formData.complement}</p>}
             <p><strong>Nome Completo do Filho:</strong> {formData.childName}</p>
