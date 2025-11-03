@@ -1,17 +1,15 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+"use client";
 
-import { MadeWithDyad } from "@/components/made-with-dyad";
+import AuthForm from "@/components/AuthForm";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">
-          Start building your amazing project here!
-        </p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-blue-800 mb-2">Bem-vindo ao TEA Connect</h1>
+        <p className="text-lg text-gray-700">Conectando responsáveis e profissionais para o cuidado TEA.</p>
       </div>
-      <MadeWithDyad />
+      <AuthForm />
     </div>
   );
 };
