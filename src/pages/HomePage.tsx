@@ -16,7 +16,7 @@ const HomePage = () => {
         <Link to="/reports" className="w-full max-w-xs">
           <Button className="w-full h-36 text-white bg-appBlueMedium hover:bg-appBlueDark flex items-center justify-start rounded-2xl shadow-md p-4">
             <FileText className="h-12 w-12 mr-4" />
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start gap-1">
               <span className="text-2xl font-semibold">Relatórios</span>
               <span className="text-base text-gray-200">Acompanhe o desenvolvimento da criança</span>
             </div>
@@ -25,7 +25,7 @@ const HomePage = () => {
         <Link to="/calendar" className="w-full max-w-xs">
           <Button className="w-full h-36 text-white bg-appBlueMedium hover:bg-appBlueDark flex items-center justify-start rounded-2xl shadow-md p-4">
             <CalendarDays className="h-12 w-12 mr-4" />
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start gap-1">
               <span className="text-2xl font-semibold">Cronograma</span>
               <span className="text-base text-gray-200">Um calendário com rotinas da criança</span>
             </div>
@@ -34,7 +34,7 @@ const HomePage = () => {
         <Link to="/news" className="w-full max-w-xs">
           <Button className="w-full h-36 text-white bg-appBlueMedium hover:bg-appBlueDark flex items-center justify-start rounded-2xl shadow-md p-4">
             <Newspaper className="h-12 w-12 mr-4" />
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start gap-1">
               <span className="text-2xl font-semibold">Notícias</span>
               <span className="text-base text-gray-200">Notícias sobre autismo em geral</span>
             </div>
