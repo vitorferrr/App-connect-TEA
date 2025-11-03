@@ -150,9 +150,11 @@ const ProfilePage = () => {
         </Card>
 
         {/* Action Buttons */}
-        <Button className="w-full h-12 bg-blue-100 hover:bg-blue-200 text-blue-700 text-lg flex items-center justify-start rounded-full shadow-sm px-6">
-          <Settings className="h-6 w-6 mr-3" /> Configurações
-        </Button>
+        <Link to="/settings" className="w-full"> {/* Atualizado para Link */}
+          <Button className="w-full h-12 bg-blue-100 hover:bg-blue-200 text-blue-700 text-lg flex items-center justify-start rounded-full shadow-sm px-6">
+            <Settings className="h-6 w-6 mr-3" /> Configurações
+          </Button>
+        </Link>
         <Button
           onClick={handleLogout}
           className="w-full h-12 bg-red-100 hover:bg-red-200 text-red-700 text-lg flex items-center justify-start rounded-full shadow-sm px-6"
