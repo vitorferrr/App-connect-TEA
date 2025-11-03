@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, PlusCircle } from "lucide-react";
 import BottomNavBar from "@/components/BottomNavBar";
 import {
   Accordion,
@@ -21,77 +21,71 @@ import {
 } from "@/components/ui/select";
 import { parse, subMonths, isAfter, isValid } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import AddReportDialog from "@/components/AddReportDialog"; // Importar o novo componente
 
 interface Report {
   id: string;
   title: string;
-  date: string;
+  date: string; // Stored as string, parsed to Date for filtering
   content: string;
+  report_type: string; // New field
 }
-
-const rawReportsData: Report[] = [
-  {
-    id: "report-1",
-    title: "Relatório de Interação Social - Semana 1",
-    date: "15 de Outubro de 2024",
-    content:
-      "Hugo demonstrou dificuldade em iniciar conversas com colegas durante o recreio. Observou-se que ele prefere brincadeiras individuais e, quando abordado, responde com frases curtas e evita contato visual prolongado. Sugere-se atividades em grupo estruturadas para incentivar a participação.",
-  },
-  {
-    id: "report-2",
-    title: "Relatório de Progresso em Comunicação - Semana 2",
-    date: "22 de Outubro de 2024",
-    content:
-      "Após a implementação de atividades em duplas, Hugo conseguiu manter um breve diálogo sobre um tópico de interesse (dinossauros) com um colega. Ainda há desafios na manutenção da conversa e na compreensão de nuances sociais, mas houve um pequeno avanço na iniciativa de responder.",
-  },
-  {
-    id: "report-3",
-    title: "Relatório de Observação em Grupo - Semana 3",
-    date: "29 de Outubro de 2024",
-    content:
-      "Durante uma atividade de contação de histórias em grupo, Hugo participou ativamente respondendo a perguntas diretas. No entanto, teve dificuldade em se inserir na discussão livre entre os colegas, preferindo ouvir. É importante continuar incentivando a expressão espontânea.",
-  },
-  {
-    id: "report-4",
-    title: "Relatório de Intervenção Social - Semana 4",
-    date: "05 de Novembro de 2024",
-    content:
-      "Foi introduzido um sistema de 'cartões de conversa' para Hugo, com sugestões de frases para iniciar e manter diálogos. Ele utilizou os cartões em duas ocasiões, resultando em interações mais longas e com menos ansiedade. Os resultados são promissores para o desenvolvimento de suas habilidades sociais.",
-  },
-  {
-    id: "report-5",
-    title: "Relatório de Interação Social - Setembro",
-    date: "10 de Setembro de 2024",
-    content: "Relatório mais antigo sobre interações sociais de Hugo.",
-  },
-  {
-    id: "report-6",
-    title: "Relatório de Progresso - Agosto",
-    date: "20 de Agosto de 2024",
-    content: "Relatório de progresso geral de Hugo.",
-  },
-];
 
 // Helper function to parse Brazilian date format
 const parseBrazilianDate = (dateString: string): Date | null => {
-  const parsedDate = parse(dateString, "dd 'de' MMMM 'de' yyyy", new Date(), { locale: ptBR });
+  const parsedDate = parse(dateString, "yyyy-MM-dd", new Date(), { locale: ptBR }); // Assuming YYYY-MM-DD from Supabase
   return isValid(parsedDate) ? parsedDate : null;
 };
 
 const ReportsPage = () => {
-  const [selectedFilter, setSelectedFilter] = useState("recent"); // Default filter
+  const [reports, setReports] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedFilter, setSelectedFilter] = useState("recent"); // Default filter for date
+  const [selectedReportType, setSelectedReportType] = useState("all"); // Default filter for type
+  const [isAddReportDialogOpen, setIsAddReportDialogOpen] = useState(false);
+
+  const fetchReports = useCallback(async () => {
+    setLoading(true);
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      toast.error("Erro ao carregar usuário. Por favor, faça login novamente.");
+      setLoading(false);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("reports")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("date", { ascending: false }); // Order by date descending by default
+
+    if (error) {
+      toast.error("Erro ao carregar relatórios: " + error.message);
+    } else {
+      setReports(data || []);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchReports();
+  }, [fetchReports]);
 
   const reportsWithParsedDates = useMemo(() => {
-    return rawReportsData.map(report => ({
+    return reports.map(report => ({
       ...report,
       parsedDate: parseBrazilianDate(report.date),
     }));
-  }, []);
+  }, [reports]);
 
   const filteredAndSortedReports = useMemo(() => {
     let filtered = reportsWithParsedDates;
     const now = new Date();
 
+    // Filter by date range
     if (selectedFilter === "3months") {
       const threeMonthsAgo = subMonths(now, 3);
       filtered = filtered.filter(report => report.parsedDate && isAfter(report.parsedDate, threeMonthsAgo));
@@ -101,22 +95,40 @@ const ReportsPage = () => {
     }
     // "all" and "recent" don't need initial filtering based on date range
 
+    // Filter by report type
+    if (selectedReportType !== "all") {
+      filtered = filtered.filter(report => report.report_type === selectedReportType);
+    }
+
     // Always sort from most recent to oldest
     return filtered.sort((a, b) => {
       if (!a.parsedDate || !b.parsedDate) return 0; // Handle cases where date parsing failed
       return b.parsedDate.getTime() - a.parsedDate.getTime();
     });
-  }, [selectedFilter, reportsWithParsedDates]);
+  }, [selectedFilter, selectedReportType, reportsWithParsedDates]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-appBgLight">
+        <p className="text-gray-600">Carregando relatórios...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
-      <header className="py-4 flex items-center">
-        <Link to="/home">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-6 w-6 text-blue-700" />
-          </Button>
-        </Link>
-        <h1 className="text-2xl font-bold text-blue-700 ml-4">Relatórios de Hugo</h1>
+      <header className="py-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <Link to="/home">
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-6 w-6 text-blue-700" />
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-bold text-blue-700 ml-4">Relatórios de Hugo</h1>
+        </div>
+        <Button variant="ghost" size="icon" onClick={() => setIsAddReportDialogOpen(true)}>
+          <PlusCircle className="h-6 w-6 text-blue-700" />
+        </Button>
       </header>
 
       <main className="flex-grow flex flex-col items-center w-full max-w-md mx-auto space-y-4">
@@ -124,7 +136,7 @@ const ReportsPage = () => {
           Acompanhe o desenvolvimento de Hugo na escola.
         </p>
 
-        <div className="w-full flex justify-end mb-4">
+        <div className="w-full flex justify-between gap-2 mb-4">
           <Select onValueChange={setSelectedFilter} defaultValue={selectedFilter}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filtrar por período" />
@@ -136,11 +148,23 @@ const ReportsPage = () => {
               <SelectItem value="all">Todos</SelectItem>
             </SelectContent>
           </Select>
+
+          <Select onValueChange={setSelectedReportType} defaultValue={selectedReportType}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filtrar por tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os Tipos</SelectItem>
+              <SelectItem value="Observação Diária">Observação Diária</SelectItem>
+              <SelectItem value="Médico">Médico</SelectItem>
+              <SelectItem value="Social/Cognitivo">Social/Cognitivo</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <Card className="w-full">
           <CardHeader>
-            <CardTitle className="text-xl text-blue-800">Relatórios Recentes</CardTitle>
+            <CardTitle className="text-xl text-blue-800">Relatórios</CardTitle>
           </CardHeader>
           <CardContent>
             {filteredAndSortedReports.length > 0 ? (
@@ -150,7 +174,9 @@ const ReportsPage = () => {
                     <AccordionTrigger className="text-left text-base font-medium text-gray-800 hover:no-underline">
                       <div className="flex flex-col items-start">
                         <span>{report.title}</span>
-                        <span className="text-sm text-gray-500 font-normal">{report.date}</span>
+                        <span className="text-sm text-gray-500 font-normal">
+                          {format(parseBrazilianDate(report.date) || new Date(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} - {report.report_type}
+                        </span>
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="text-gray-700 text-sm p-2 border-t mt-2 pt-2">
@@ -160,11 +186,17 @@ const ReportsPage = () => {
                 ))}
               </Accordion>
             ) : (
-              <p className="text-center text-gray-500">Nenhum relatório encontrado para o período selecionado.</p>
+              <p className="text-center text-gray-500">Nenhum relatório encontrado para o período ou tipo selecionado.</p>
             )}
           </CardContent>
         </Card>
       </main>
+
+      <AddReportDialog
+        isOpen={isAddReportDialogOpen}
+        onOpenChange={setIsAddReportDialogOpen}
+        onReportAdded={fetchReports}
+      />
 
       <BottomNavBar />
     </div>
