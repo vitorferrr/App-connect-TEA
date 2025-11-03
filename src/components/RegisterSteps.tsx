@@ -239,15 +239,15 @@ const RegisterSteps = () => {
         return (
           <>
             <div className="grid gap-2">
-              <Label htmlFor="firstName">Nome Completo da Mãe *</Label>
+              <Label htmlFor="firstName">Nome Completo do Responsável *</Label>
               <Input id="firstName" type="text" placeholder="Ex: Maria José dos Santos Silva" required value={formData.firstName} onChange={handleChange} />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="lastName">Sobrenome da Mãe *</Label>
+              <Label htmlFor="lastName">Sobrenome do Responsável *</Label>
               <Input id="lastName" type="text" placeholder="Ex: Silva" required value={formData.lastName} onChange={handleChange} />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="age">Telefone *</Label> {/* Changed label to Telefone */}
+              <Label htmlFor="age">Telefone *</Label>
               <Input id="age" type="text" placeholder="Ex: (XX) XXXXX-XXXX" required value={formData.age} onChange={handleChange} />
             </div>
             <div className="grid gap-2">
@@ -331,8 +331,8 @@ const RegisterSteps = () => {
             <h3 className="text-lg font-semibold text-blue-800">Confirmação de Dados</h3>
             <p><strong>E-mail:</strong> {formData.email}</p>
             <p><strong>Senha:</strong> ********</p>
-            <p><strong>Nome Completo da Mãe:</strong> {formData.firstName} {formData.lastName}</p>
-            <p><strong>Telefone:</strong> {formData.age}</p> {/* Changed label to Telefone */}
+            <p><strong>Nome Completo do Responsável:</strong> {formData.firstName} {formData.lastName}</p>
+            <p><strong>Telefone:</strong> {formData.age}</p>
             <p><strong>Endereço:</strong> {formData.address}</p>
             {formData.complement && <p><strong>Complemento:</strong> {formData.complement}</p>}
             <p><strong>Nome Completo do Filho:</strong> {formData.childName}</p>
@@ -365,7 +365,7 @@ const RegisterSteps = () => {
             </Button>
           )}
           <CardTitle className="text-xl flex-grow text-center">
-            {step === 5 ? "Confirmação de Dados" : "Cadastro da Mãe"}
+            {step === 5 ? "Confirmação de Dados" : "Cadastro do Responsável"}
           </CardTitle>
           {step > 1 && step < 5 && <div className="w-6"></div>} {/* Spacer */}
         </CardHeader>
