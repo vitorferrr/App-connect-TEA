@@ -27,6 +27,8 @@ interface Activity {
   id: string;
   title: string;
   description: string;
+  location: string; // Novo campo
+  time: string;      // Novo campo
 }
 
 const CalendarPage = () => {
@@ -34,6 +36,8 @@ const CalendarPage = () => {
   const [activities, setActivities] = useState<{ [key: string]: Activity[] }>({});
   const [newActivityTitle, setNewActivityTitle] = useState("");
   const [newActivityDescription, setNewActivityDescription] = useState("");
+  const [newActivityLocation, setNewActivityLocation] = useState(""); // Novo estado
+  const [newActivityTime, setNewActivityTime] = useState("");         // Novo estado
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const formatDateKey = (d: Date | undefined): string => {
@@ -56,11 +60,17 @@ const CalendarPage = () => {
       toast.error("O título da atividade não pode ser vazio.");
       return;
     }
+    if (!newActivityTime.trim()) {
+      toast.error("O horário da atividade não pode ser vazio.");
+      return;
+    }
 
     const newActivity: Activity = {
       id: Date.now().toString(), // Simple unique ID
       title: newActivityTitle.trim(),
       description: newActivityDescription.trim(),
+      location: newActivityLocation.trim(), // Incluir local
+      time: newActivityTime.trim(),         // Incluir horário
     };
 
     setActivities((prevActivities) => ({
@@ -70,6 +80,8 @@ const CalendarPage = () => {
 
     setNewActivityTitle("");
     setNewActivityDescription("");
+    setNewActivityLocation(""); // Resetar local
+    setNewActivityTime("");     // Resetar horário
     setIsDialogOpen(false);
     toast.success("Atividade adicionada com sucesso!");
   };
@@ -159,6 +171,29 @@ const CalendarPage = () => {
                         className="col-span-3"
                       />
                     </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="location" className="text-right">
+                        Local
+                      </Label>
+                      <Input
+                        id="location"
+                        value={newActivityLocation}
+                        onChange={(e) => setNewActivityLocation(e.target.value)}
+                        className="col-span-3"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="time" className="text-right">
+                        Horário
+                      </Label>
+                      <Input
+                        id="time"
+                        type="time" // Tipo time para facilitar a entrada
+                        value={newActivityTime}
+                        onChange={(e) => setNewActivityTime(e.target.value)}
+                        className="col-span-3"
+                      />
+                    </div>
                   </div>
                   <DialogFooter>
                     <Button type="submit" onClick={handleAddActivity}>
@@ -177,6 +212,13 @@ const CalendarPage = () => {
                         <h3 className="font-semibold text-gray-800">{activity.title}</h3>
                         {activity.description && (
                           <p className="text-sm text-gray-600">{activity.description}</p>
+                        )}
+                        {(activity.location || activity.time) && (
+                          <p className="text-xs text-gray-500">
+                            {activity.time && `⏰ ${activity.time}`}
+                            {activity.time && activity.location && " | "}
+                            {activity.location && `📍 ${activity.location}`}
+                          </p>
                         )}
                       </div>
                       <Button
