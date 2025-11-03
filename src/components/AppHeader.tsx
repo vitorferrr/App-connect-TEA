@@ -7,10 +7,10 @@ const AppHeader = () => {
   return (
     <header className="w-full bg-appBlueDark text-white p-4 flex items-center justify-between relative">
       <div className="flex items-center z-10">
-        <Puzzle className="h-8 w-8 mr-2" />
+        <img src="/app-logo-new.png" alt="Connect TEA Logo" className="h-10 w-10 mr-2" />
         <h1 className="text-2xl font-bold">Connect TEA</h1>
       </div>
-      <p className="absolute left-1/2 -translate-x-1/2 text-lg font-semibold">👋 Olá, Maria! Como vai hoje?</p>
+      {/* O texto de saudação foi movido para HomePage.tsx */}
     </header>
   );
 };

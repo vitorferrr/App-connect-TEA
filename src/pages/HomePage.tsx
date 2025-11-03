@@ -13,30 +13,31 @@ const HomePage = () => {
       <AppHeader />
 
       <main className="flex-grow flex flex-col items-center justify-center space-y-6 p-4">
+        <p className="text-lg font-semibold text-black text-center mb-6">👋 Olá, Maria! Como vai hoje?</p> {/* Texto movido e estilizado */}
         <Link to="/reports" className="w-full max-w-xs">
           <Button className="w-full h-36 text-white bg-appBlueDark hover:bg-blue-900 flex items-center justify-start rounded-2xl shadow-md p-4">
             <FileText className="h-12 w-12 mr-4" />
-            <div className="flex flex-col flex-grow items-start gap-1"> {/* Alterado para items-start */}
+            <div className="flex flex-col flex-grow items-start gap-1">
               <span className="text-2xl font-semibold">Relatórios</span>
-              <span className="text-sm text-gray-200 text-left">Acompanhe o desenvolvimento da criança</span> {/* Alterado para text-left */}
+              <span className="text-sm text-gray-200 text-left">Acompanhe o desenvolvimento da criança</span>
             </div>
           </Button>
         </Link>
         <Link to="/calendar" className="w-full max-w-xs">
           <Button className="w-full h-36 text-white bg-appBlueMedium hover:bg-appBlueDark flex items-center justify-start rounded-2xl shadow-md p-4">
             <CalendarDays className="h-12 w-12 mr-4" />
-            <div className="flex flex-col flex-grow items-start gap-1"> {/* Alterado para items-start */}
+            <div className="flex flex-col flex-grow items-start gap-1">
               <span className="text-2xl font-semibold">Cronograma</span>
-              <span className="text-sm text-gray-200 text-left">Um calendário com rotinas da criança</span> {/* Alterado para text-left */}
+              <span className="text-sm text-gray-200 text-left">Um calendário com rotinas da criança</span>
             </div>
           </Button>
         </Link>
         <Link to="/news" className="w-full max-w-xs">
           <Button className="w-full h-36 text-white bg-appBlueMedium hover:bg-appBlueDark flex items-center justify-start rounded-2xl shadow-md p-4">
             <Newspaper className="h-12 w-12 mr-4" />
-            <div className="flex flex-col flex-grow items-start gap-1"> {/* Alterado para items-start */}
+            <div className="flex flex-col flex-grow items-start gap-1">
               <span className="text-2xl font-semibold">Notícias</span>
-              <span className="text-sm text-gray-200 text-left">Notícias sobre autismo em geral</span> {/* Alterado para text-left */}
+              <span className="text-sm text-gray-200 text-left">Notícias sobre autismo em geral</span>
             </div>
           </Button>
         </Link>
