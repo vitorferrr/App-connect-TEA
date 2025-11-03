@@ -117,23 +117,14 @@ const ReportsPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
-      <header className="py-4 flex items-center justify-between">
-        <div className="flex items-center">
-          <Link to="/home">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-6 w-6 text-blue-700" />
-            </Button>
-          </Link>
-          <h1 className="text-2xl font-bold text-blue-700 ml-4">Relatórios de Hugo</h1>
-        </div>
-        <Button
-          onClick={() => setIsAddReportDialogOpen(true)}
-          className="bg-appBlueMedium hover:bg-appBlueDark text-white px-4 py-2 rounded-full flex items-center gap-2"
-        >
-          <PlusCircle className="h-5 w-5" />
-          Adicionar Relatório
-        </Button>
+    <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-32"> {/* Increased padding-bottom */}
+      <header className="py-4 flex items-center">
+        <Link to="/home">
+          <Button variant="ghost" size="icon">
+            <ArrowLeft className="h-6 w-6 text-blue-700" />
+          </Button>
+        </Link>
+        <h1 className="text-2xl font-bold text-blue-700 ml-4">Relatórios de Hugo</h1>
       </header>
 
       <main className="flex-grow flex flex-col items-center w-full max-w-md mx-auto space-y-4">
@@ -196,6 +187,17 @@ const ReportsPage = () => {
           </CardContent>
         </Card>
       </main>
+
+      {/* Floating Add Report Button */}
+      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-xs">
+        <Button
+          onClick={() => setIsAddReportDialogOpen(true)}
+          className="w-full h-14 bg-appBlueMedium hover:bg-appBlueDark text-white text-lg flex items-center justify-center rounded-full shadow-lg gap-2"
+        >
+          <PlusCircle className="h-6 w-6" />
+          Adicionar Relatório
+        </Button>
+      </div>
 
       <AddReportDialog
         isOpen={isAddReportDialogOpen}
