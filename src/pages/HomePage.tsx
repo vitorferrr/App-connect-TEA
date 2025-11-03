@@ -18,7 +18,7 @@ const HomePage = () => {
             <FileText className="h-12 w-12 mr-4" />
             <div className="flex flex-col items-start gap-1">
               <span className="text-2xl font-semibold">Relatórios</span>
-              <span className="text-base text-gray-200">Acompanhe o desenvolvimento da criança</span>
+              <span className="text-sm text-gray-200">Acompanhe o desenvolvimento da criança</span>
             </div>
           </Button>
         </Link>
@@ -27,7 +27,7 @@ const HomePage = () => {
             <CalendarDays className="h-12 w-12 mr-4" />
             <div className="flex flex-col items-start gap-1">
               <span className="text-2xl font-semibold">Cronograma</span>
-              <span className="text-base text-gray-200">Um calendário com rotinas da criança</span>
+              <span className="text-sm text-gray-200">Um calendário com rotinas da criança</span>
             </div>
           </Button>
         </Link>
@@ -36,7 +36,7 @@ const HomePage = () => {
             <Newspaper className="h-12 w-12 mr-4" />
             <div className="flex flex-col items-start gap-1">
               <span className="text-2xl font-semibold">Notícias</span>
-              <span className="text-base text-gray-200">Notícias sobre autismo em geral</span>
+              <span className="text-sm text-gray-200">Notícias sobre autismo em geral</span>
             </div>
           </Button>
         </Link>
