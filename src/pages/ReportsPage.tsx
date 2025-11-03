@@ -70,6 +70,42 @@ const rawReportsData: Report[] = [
     date: "20 de Agosto de 2024",
     content: "Relatório de progresso geral de Hugo.",
   },
+  {
+    id: "report-7",
+    title: "Relatório de Terapia Ocupacional - Julho",
+    date: "01 de Julho de 2024",
+    content: "Sessão de terapia ocupacional focada em habilidades motoras finas.",
+  },
+  {
+    id: "report-8",
+    title: "Relatório de Fonoaudiologia - Junho",
+    date: "15 de Junho de 2024",
+    content: "Acompanhamento da evolução da fala e comunicação verbal.",
+  },
+  {
+    id: "report-9",
+    title: "Relatório Comportamental - Maio",
+    date: "28 de Maio de 2024",
+    content: "Observações sobre padrões comportamentais em diferentes ambientes.",
+  },
+  {
+    id: "report-10",
+    title: "Relatório de Desenvolvimento Cognitivo - Abril",
+    date: "05 de Abril de 2024",
+    content: "Avaliação do desenvolvimento cognitivo e resolução de problemas.",
+  },
+  {
+    id: "report-11",
+    title: "Relatório de Interação Social - Março",
+    date: "12 de Março de 2024",
+    content: "Novas estratégias para promover a interação social em grupo.",
+  },
+  {
+    id: "report-12",
+    title: "Relatório Anual - Dezembro",
+    date: "10 de Dezembro de 2023",
+    content: "Relatório consolidado do ano de 2023, destacando os principais avanços.",
+  },
 ];
 
 // Helper function to parse Brazilian date format
