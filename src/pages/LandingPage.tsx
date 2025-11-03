@@ -27,9 +27,8 @@ const LandingPage = () => {
             <Lock className="h-6 w-6 mr-2" /> Cadastre-se
           </Button>
         </Link>
-        {/* Botão "Entrar" removido conforme solicitado */}
         <Button variant="outline" className="w-full h-12 border-gray-300 text-gray-700 flex items-center justify-center rounded-full shadow-sm">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google Logo" className="h-5 w-5 mr-2" />
+          <span className="font-bold text-xl mr-2">G</span>
           Conectar com o Google
         </Button>
         <p className="mt-4 text-center text-sm text-gray-700">
