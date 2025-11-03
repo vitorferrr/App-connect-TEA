@@ -3,15 +3,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { User, Lock } from "lucide-react"; // Removendo Puzzle
+import { User, Lock, Puzzle } from "lucide-react"; // Importando Puzzle para o ícone
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100 p-4">
       <div className="text-center mb-8">
-        {/* Usando a nova imagem do logo */}
-        <img src="/app-logo-new.png" alt="Connect TEA Logo" className="h-24 w-24 mx-auto mb-4" />
+        {/* Ícone de quebra-cabeça simbolizando a inclusão autista */}
+        <Puzzle className="h-24 w-24 mx-auto mb-4 text-blue-600" /> 
         <h1 className="text-4xl font-bold text-blue-800 mb-2">Connect TEA</h1>
       </div>
 
