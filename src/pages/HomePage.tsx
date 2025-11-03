@@ -12,7 +12,7 @@ const HomePage = () => {
     <div className="min-h-screen flex flex-col bg-appBgLight pb-16"> {/* Ajustado pb para a altura da nav bar */}
       <AppHeader /> {/* Usar o novo componente de cabeçalho */}
 
-      <main className="flex-grow flex flex-col items-center justify-center space-y-6 p-4">
+      <main className="flex-grow flex flex-col items-center justify-end space-y-6 p-4">
         <Link to="/reports" className="w-full max-w-xs">
           <Button className="w-full h-28 text-white bg-appBlueMedium hover:bg-appBlueDark flex items-center justify-start rounded-2xl shadow-md p-4">
             <FileText className="h-10 w-10 mr-4" />
