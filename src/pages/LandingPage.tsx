@@ -14,7 +14,7 @@ const LandingPage = () => {
         <div className="w-24 h-24 mx-auto mb-4">
           <img src="/placeholder.svg" alt="Logo" className="w-full h-full object-contain" />
         </div>
-        <h1 className="text-4xl font-bold text-blue-800 mb-2">TESTE</h1>
+        <h1 className="text-4xl font-bold text-blue-800 mb-2">Connect TEA</h1>
       </div>
 
       <div className="flex flex-col gap-4 w-full max-w-xs">
