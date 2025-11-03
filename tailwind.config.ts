@@ -62,6 +62,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Novas cores para o layout do aplicativo
+        appBgLight: "hsl(var(--app-bg-light))",
+        appBlueDark: "hsl(var(--app-blue-dark))",
+        appBlueMedium: "hsl(var(--app-blue-medium))",
+        appYellowActive: "hsl(var(--app-yellow-active))",
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -49,6 +49,12 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Novas cores para o layout do aplicativo */
+    --app-bg-light: 30 10% 95%; /* Um bege claro */
+    --app-blue-dark: 210 50% 25%; /* Um azul escuro */
+    --app-blue-medium: 210 60% 45%; /* Um azul médio */
+    --app-yellow-active: 45 100% 60%; /* Um amarelo vibrante */
   }
 
   .dark {
@@ -87,6 +93,12 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Novas cores para o layout do aplicativo no modo escuro (ajustar conforme necessário) */
+    --app-bg-light: 222.2 84% 4.9%; /* Usar o background escuro padrão */
+    --app-blue-dark: 210 50% 25%; /* Manter o azul escuro */
+    --app-blue-medium: 210 60% 45%; /* Manter o azul médio */
+    --app-yellow-active: 45 100% 60%; /* Manter o amarelo */
   }
 }
 

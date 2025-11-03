@@ -5,32 +5,39 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { FileText, CalendarDays, Newspaper } from "lucide-react";
 import BottomNavBar from "@/components/BottomNavBar";
+import AppHeader from "@/components/AppHeader"; // Importar o novo cabeçalho
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-purple-50 p-4 pb-20"> {/* Added pb-20 for bottom nav bar */}
-      <header className="text-center py-8">
-        <h1 className="text-3xl font-bold text-blue-700">Olá, Usuário!</h1>
-        <p className="text-md text-gray-600 mt-2">Bem-vindo ao seu painel de controle.</p>
-      </header>
+    <div className="min-h-screen flex flex-col bg-appBgLight pb-16"> {/* Ajustado pb para a altura da nav bar */}
+      <AppHeader /> {/* Usar o novo componente de cabeçalho */}
 
-      <main className="flex-grow flex flex-col items-center justify-center space-y-6">
+      <main className="flex-grow flex flex-col items-center justify-center space-y-6 p-4">
         <Link to="/reports" className="w-full max-w-xs">
-          <Button className="w-full h-24 text-lg bg-blue-500 hover:bg-blue-600 text-white flex flex-col items-center justify-center rounded-lg shadow-md">
-            <FileText className="h-8 w-8 mb-2" />
-            Relatórios
+          <Button className="w-full h-28 text-white bg-appBlueMedium hover:bg-appBlueDark flex items-center justify-start rounded-2xl shadow-md p-4">
+            <FileText className="h-10 w-10 mr-4" />
+            <div className="flex flex-col items-start">
+              <span className="text-xl font-semibold">Relatórios</span>
+              <span className="text-sm text-gray-200">Acompanhe o desenvolvimento da criança</span>
+            </div>
           </Button>
         </Link>
         <Link to="/calendar" className="w-full max-w-xs">
-          <Button className="w-full h-24 text-lg bg-purple-500 hover:bg-purple-600 text-white flex flex-col items-center justify-center rounded-lg shadow-md">
-            <CalendarDays className="h-8 w-8 mb-2" />
-            Calendário
+          <Button className="w-full h-28 text-white bg-appBlueMedium hover:bg-appBlueDark flex items-center justify-start rounded-2xl shadow-md p-4">
+            <CalendarDays className="h-10 w-10 mr-4" />
+            <div className="flex flex-col items-start">
+              <span className="text-xl font-semibold">Cronograma</span>
+              <span className="text-sm text-gray-200">Um calendário com rotinas da criança</span>
+            </div>
           </Button>
         </Link>
         <Link to="/news" className="w-full max-w-xs">
-          <Button className="w-full h-24 text-lg bg-green-500 hover:bg-green-600 text-white flex flex-col items-center justify-center rounded-lg shadow-md">
-            <Newspaper className="h-8 w-8 mb-2" />
-            Notícias TEA
+          <Button className="w-full h-28 text-white bg-appBlueMedium hover:bg-appBlueDark flex items-center justify-start rounded-2xl shadow-md p-4">
+            <Newspaper className="h-10 w-10 mr-4" />
+            <div className="flex flex-col items-start">
+              <span className="text-xl font-semibold">Notícias</span>
+              <span className="text-sm text-gray-200">Notícias sobre autismo em geral</span>
+            </div>
           </Button>
         </Link>
       </main>
