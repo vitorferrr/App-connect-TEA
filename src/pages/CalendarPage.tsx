@@ -28,14 +28,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"; // Import Select components
+} from "@/components/ui/select";
 
 interface Activity {
   id: string;
   title: string;
   description: string;
-  location: string; // Novo campo
-  time: string;      // Novo campo
+  location: string;
+  time: string;
 }
 
 const CalendarPage = () => {
@@ -43,10 +43,11 @@ const CalendarPage = () => {
   const [activities, setActivities] = useState<{ [key: string]: Activity[] }>({});
   const [newActivityTitle, setNewActivityTitle] = useState("");
   const [newActivityDescription, setNewActivityDescription] = useState("");
-  const [newActivityLocation, setNewActivityLocation] = useState(""); // Novo estado
-  const [newActivityHour, setNewActivityHour] = useState("09"); // Novo estado para hora
-  const [newActivityMinute, setNewActivityMinute] = useState("00"); // Novo estado para minuto
+  const [newActivityLocation, setNewActivityLocation] = useState("");
+  const [newActivityHour, setNewActivityHour] = useState("09");
+  const [newActivityMinute, setNewActivityMinute] = useState("00");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showCustomLocationInput, setShowCustomLocationInput] = useState(false); // Novo estado
 
   const formatDateKey = (d: Date | undefined): string => {
     return d ? format(d, "yyyy-MM-dd") : "";
@@ -59,6 +60,16 @@ const CalendarPage = () => {
   const selectedDateKey = useMemo(() => formatDateKey(date), [date]);
   const activitiesForSelectedDate = useMemo(() => activities[selectedDateKey] || [], [activities, selectedDateKey]);
 
+  const handleLocationChange = (value: string) => {
+    if (value === "custom") {
+      setShowCustomLocationInput(true);
+      setNewActivityLocation(""); // Limpa o valor anterior para o usuário digitar
+    } else {
+      setShowCustomLocationInput(false);
+      setNewActivityLocation(value);
+    }
+  };
+
   const handleAddActivity = () => {
     if (!date) {
       toast.error("Selecione uma data para adicionar uma atividade.");
@@ -68,17 +79,21 @@ const CalendarPage = () => {
       toast.error("O título da atividade não pode ser vazio.");
       return;
     }
+    if (!newActivityLocation.trim()) { // Validação para o campo de local
+      toast.error("O local da atividade não pode ser vazio.");
+      return;
+    }
     if (!newActivityHour || !newActivityMinute) {
       toast.error("O horário da atividade não pode ser vazio.");
       return;
     }
 
     const newActivity: Activity = {
-      id: Date.now().toString(), // Simple unique ID
+      id: Date.now().toString(),
       title: newActivityTitle.trim(),
       description: newActivityDescription.trim(),
-      location: newActivityLocation.trim(), // Incluir local
-      time: `${newActivityHour}:${newActivityMinute}`, // Combinar hora e minuto
+      location: newActivityLocation.trim(),
+      time: `${newActivityHour}:${newActivityMinute}`,
     };
 
     setActivities((prevActivities) => ({
@@ -88,9 +103,10 @@ const CalendarPage = () => {
 
     setNewActivityTitle("");
     setNewActivityDescription("");
-    setNewActivityLocation(""); // Resetar local
-    setNewActivityHour("09"); // Resetar hora
-    setNewActivityMinute("00"); // Resetar minuto
+    setNewActivityLocation("");
+    setShowCustomLocationInput(false); // Resetar a visibilidade do input customizado
+    setNewActivityHour("09");
+    setNewActivityMinute("00");
     setIsDialogOpen(false);
     toast.success("Atividade adicionada com sucesso!");
   };
@@ -193,12 +209,28 @@ const CalendarPage = () => {
                       <Label htmlFor="location" className="text-right">
                         Local
                       </Label>
-                      <Input
-                        id="location"
-                        value={newActivityLocation}
-                        onChange={(e) => setNewActivityLocation(e.target.value)}
-                        className="col-span-3"
-                      />
+                      <div className="col-span-3">
+                        <Select onValueChange={handleLocationChange} value={showCustomLocationInput ? "custom" : newActivityLocation}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione ou digite um local" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Escola">Escola</SelectItem>
+                            <SelectItem value="Casa">Casa</SelectItem>
+                            <SelectItem value="Hospital">Hospital</SelectItem>
+                            <SelectItem value="custom">Outro (digitar)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {showCustomLocationInput && (
+                          <Input
+                            id="customLocation"
+                            value={newActivityLocation}
+                            onChange={(e) => setNewActivityLocation(e.target.value)}
+                            placeholder="Digite o local"
+                            className="mt-2"
+                          />
+                        )}
+                      </div>
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                       <Label htmlFor="time" className="text-right">
