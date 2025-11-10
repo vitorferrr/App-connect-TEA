@@ -199,7 +199,7 @@ const CalendarPage = () => {
                     <DialogDescription>
                       Adicione uma nova atividade para {formatDisplayDate(date)}.
                     </DialogDescription>
-                  </DialogHeader>
+                  </DialogDescription>
                   <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
                       <Label htmlFor="title" className="text-right">
@@ -311,7 +311,7 @@ const CalendarPage = () => {
                             ))}
                             <SelectItem value="custom">
                               <div className="flex items-center gap-2">
-                                <span className="h-4 w-4 rounded-full bg-gradient-to-r from-red-500 via-green-500 to-blue-500" />
+                                <span className="h-4 w-4 rounded-full bg-gray-400" /> {/* Bola cinza para 'Cor Personalizada' */}
                                 Cor Personalizada
                               </div>
                             </SelectItem>
