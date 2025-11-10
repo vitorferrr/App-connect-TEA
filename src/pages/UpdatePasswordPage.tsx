@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import AuthLayout from "@/components/AuthLayout";
@@ -18,7 +18,6 @@ const UpdatePasswordPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   // Password validation states
@@ -27,14 +26,18 @@ const UpdatePasswordPage = () => {
   const [hasUpperCase, setHasUpperCase] = useState(false);
 
   useEffect(() => {
-    const type = searchParams.get('type');
-    const accessToken = searchParams.get('access_token');
+    // Lê os parâmetros da hash da URL
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const type = hashParams.get('type');
+    const accessToken = hashParams.get('access_token');
 
     if (type !== 'recovery' || !accessToken) {
       toast.error("Link de redefinição de senha inválido ou expirado.");
       navigate("/login");
     }
-  }, [searchParams, navigate]);
+    // O cliente Supabase deve pegar a sessão automaticamente da hash
+    // Não é necessário definir a sessão manualmente aqui, apenas validar a presença dos tokens
+  }, [navigate]);
 
   const validatePassword = (pwd: string) => {
     setHasMinLength(pwd.length >= 8);
