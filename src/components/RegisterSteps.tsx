@@ -389,7 +389,7 @@ const RegisterSteps = () => {
                       s <= step ? "bg-appBluePrimary border-appBluePrimary text-appAccent" : "border-gray-300 text-gray-500"
                     )}
                   >
-                    {s < step ? <CheckCircle2 className="h-4 w-4" /> : s}
+                    {s < step ? <CheckCircle2 className="h-4 w-4" /> : <span className="font-bold">{s}</span>}
                   </div>
                   {s < 4 && <div className={cn("h-0.5 w-8", s < step ? "bg-appBluePrimary" : "bg-gray-300")} />}
                 </React.Fragment>
