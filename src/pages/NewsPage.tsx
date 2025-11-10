@@ -62,6 +62,14 @@ const newsArticles: NewsArticle[] = [
   },
 ];
 
+// Cores fixas para os cartões de notícias
+const fixedColors = [
+  { bg: "bg-appRandom-dark-blue", border: "border-appRandom-dark-blue/30" },
+  { bg: "bg-appRandom-light-blue", border: "border-appRandom-light-blue/30" },
+  { bg: "bg-appRandom-red", border: "border-appRandom-red/30" },
+  { bg: "bg-appRandom-yellow", border: "border-appRandom-yellow/30" },
+];
+
 const NewsPage = () => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -87,9 +95,10 @@ const NewsPage = () => {
           Mantenha-se atualizado com as últimas notícias e informações sobre o autismo.
         </p>
 
-        {newsArticles.map((article) => {
-          const headerBgClass = getRandomAppRandomBgColorClass();
-          const cardBorderClass = getRandomAppRandomBorderColorClass();
+        {newsArticles.map((article, index) => {
+          const colorSet = fixedColors[index % fixedColors.length]; // Cicla pelas cores fixas
+          const headerBgClass = colorSet.bg;
+          const cardBorderClass = colorSet.border;
 
           return (
             <Card key={article.id} className={cn("w-full shadow-lg border-2 transition-all hover:scale-[1.02]", cardBorderClass)}>
