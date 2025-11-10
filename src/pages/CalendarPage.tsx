@@ -147,8 +147,10 @@ const CalendarPage = () => {
     String(i).padStart(2, "0")
   );
 
-  const calendarCardBgClass = useMemo(() => getRandomAppRandomBgColorClass(), []);
-  const calendarCardBorderClass = useMemo(() => getRandomAppRandomBorderColorClass(), []);
+  // Removendo as chamadas para getRandomAppRandomBgColorClass e getRandomAppRandomBorderColorClass
+  // e definindo as classes diretamente para vermelho.
+  const calendarCardBgClass = "bg-appMidRed";
+  const calendarCardBorderClass = "border-appMidRed/30";
 
   return (
     <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
