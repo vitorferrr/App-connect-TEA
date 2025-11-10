@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, PlusCircle, Download } from "lucide-react"; // Importar o ícone Download
+import { ArrowLeft, PlusCircle, Download } from "lucide-react";
 import BottomNavBar from "@/components/BottomNavBar";
 import {
   Accordion,
@@ -20,16 +20,17 @@ import {
   SelectValue,
 }
 from "@/components/ui/select";
-import { parse, subMonths, isAfter, isValid, format } from "date-fns"; // Import format
+import { parse, subMonths, isAfter, isValid, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AddReportDialog from "@/components/AddReportDialog";
+import { jsPDF } from "jspdf"; // Import jspdf
 
 interface Report {
   id: string;
   title: string;
-  date: string; // Stored as string, parsed to Date for filtering
+  date: string;
   content: string;
   report_type: string;
 }
@@ -49,7 +50,7 @@ const ReportsPage = () => {
   const [selectedFilter, setSelectedFilter] = useState("recent");
   const [selectedReportType, setSelectedReportType] = useState("all");
   const [isAddReportDialogOpen, setIsAddReportDialogOpen] = useState(false);
-  const [childName, setChildName] = useState("da Criança"); // State to hold child's name
+  const [childName, setChildName] = useState("da Criança");
 
   const fetchReports = useCallback(async () => {
     setLoading(true);
@@ -138,27 +139,24 @@ const ReportsPage = () => {
   }, [selectedFilter, selectedReportType, reportsWithParsedDates]);
 
   const handleDownloadReport = (report: Report) => {
-    const formattedDate = report.parsedDate ? format(report.parsedDate, "dd-MM-yyyy", { locale: ptBR }) : "DataDesconhecida";
-    const fileName = `Relatorio_${report.title.replace(/\s/g, '_')}_${formattedDate}.txt`;
-    const fileContent = `
-Relatório: ${report.title}
-Tipo: ${report.report_type}
-Data: ${report.parsedDate ? format(report.parsedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Data Desconhecida"}
+    const doc = new jsPDF();
+    const formattedDate = report.parsedDate ? format(report.parsedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Data Desconhecida";
+    const fileName = `Relatorio_${report.title.replace(/\s/g, '_')}_${format(new Date(), "yyyyMMdd_HHmmss")}.pdf`;
 
-Conteúdo:
-${report.content}
-    `.trim();
+    doc.setFontSize(18);
+    doc.text("Relatório: " + report.title, 14, 22);
 
-    const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    toast.success("Relatório baixado com sucesso!");
+    doc.setFontSize(12);
+    doc.text("Tipo: " + report.report_type, 14, 32);
+    doc.text("Data: " + formattedDate, 14, 42);
+
+    doc.setFontSize(14);
+    doc.text("Conteúdo:", 14, 58);
+    doc.setFontSize(12);
+    doc.text(report.content, 14, 68, { maxWidth: 180 });
+
+    doc.save(fileName);
+    toast.success("Relatório baixado com sucesso como PDF!");
   };
 
   if (loading) {
