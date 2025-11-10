@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, PlusCircle } from "lucide-react";
+import { ArrowLeft, PlusCircle, Download } from "lucide-react"; // Importar o ícone Download
 import BottomNavBar from "@/components/BottomNavBar";
 import {
   Accordion,
@@ -137,6 +137,30 @@ const ReportsPage = () => {
     });
   }, [selectedFilter, selectedReportType, reportsWithParsedDates]);
 
+  const handleDownloadReport = (report: Report) => {
+    const formattedDate = report.parsedDate ? format(report.parsedDate, "dd-MM-yyyy", { locale: ptBR }) : "DataDesconhecida";
+    const fileName = `Relatorio_${report.title.replace(/\s/g, '_')}_${formattedDate}.txt`;
+    const fileContent = `
+Relatório: ${report.title}
+Tipo: ${report.report_type}
+Data: ${report.parsedDate ? format(report.parsedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Data Desconhecida"}
+
+Conteúdo:
+${report.content}
+    `.trim();
+
+    const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast.success("Relatório baixado com sucesso!");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-appBgLight">
@@ -196,13 +220,24 @@ const ReportsPage = () => {
               <Accordion type="single" collapsible className="w-full">
                 {filteredAndSortedReports.map((report) => (
                   <AccordionItem key={report.id} value={report.id}>
-                    <AccordionTrigger className="text-left text-base font-medium text-gray-800 hover:no-underline">
-                      <div className="flex flex-col items-start">
+                    <AccordionTrigger className="text-left text-base font-medium text-gray-800 hover:no-underline flex justify-between items-center">
+                      <div className="flex flex-col items-start flex-grow">
                         <span>{report.title || "Sem Título"}</span>
                         <span className="text-sm text-gray-500 font-normal">
                           {report.parsedDate ? format(report.parsedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Data Desconhecida"} - {report.report_type || "Tipo Desconhecido"}
                         </span>
                       </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent accordion from toggling
+                          handleDownloadReport(report);
+                        }}
+                        className="text-appPuzzleYellow hover:bg-appPuzzleYellow/20 ml-2"
+                      >
+                        <Download className="h-5 w-5" />
+                      </Button>
                     </AccordionTrigger>
                     <AccordionContent className="text-gray-700 text-sm p-2 border-t mt-2 pt-2">
                       {report.content || "Sem conteúdo."}
