@@ -56,7 +56,7 @@
     --app-blue-secondary: 201 79% 55%; /* Azul secundário */
     --app-puzzle-red: 355 78% 60%; /* Vermelho quebra-cabeça */
     --app-puzzle-yellow: 45 95% 60%; /* Amarelo quebra-cabeça */
-    --app-puzzle-green: 142 69% 50%; /* Verde quebra-cabeça */
+    --app-puzzle-green: 142 69% 40%; /* Verde quebra-cabeça (ajustado para mais escuro) */
     --app-accent: 208 92% 35%; /* Azul escuro para contraste */
 
     /* Novas Cores da Paleta Randômica */
@@ -110,7 +110,7 @@
     --app-blue-secondary: 201 79% 65%;
     --app-puzzle-red: 355 78% 70%;
     --app-puzzle-yellow: 45 95% 70%;
-    --app-puzzle-green: 142 69% 60%;
+    --app-puzzle-green: 142 69% 50%; /* Verde quebra-cabeça (ajustado para mais escuro) */
     --app-accent: 208 92% 45%;
 
     /* Novas Cores da Paleta Randômica (Modo Escuro - ajustadas para visibilidade) */
