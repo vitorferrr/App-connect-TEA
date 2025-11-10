@@ -70,6 +70,7 @@ export default {
         appPuzzleYellow: "hsl(var(--app-puzzle-yellow))",
         appPuzzleGreen: "hsl(var(--app-puzzle-green))",
         appAccent: "hsl(var(--app-accent))",
+        appMidRed: "hsl(var(--app-mid-red))", // Nova cor adicionada
         // Novas Cores da Paleta Randômica
         appRandom: {
           red: "hsl(var(--app-random-red))",

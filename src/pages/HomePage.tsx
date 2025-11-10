@@ -75,13 +75,13 @@ const HomePage = () => {
           </Button>
         </Link>
         <Link to="/news" className="w-full max-w-xs">
-          <Button className="w-full h-36 text-white bg-appBlueSecondary hover:bg-appBluePrimary flex items-center justify-start rounded-2xl shadow-lg p-4 transition-all hover:scale-105 border-2 border-transparent hover:border-appPuzzleYellow">
+          <Button className="w-full h-36 text-white bg-appMidRed hover:bg-appPuzzleRed flex items-center justify-start rounded-2xl shadow-lg p-4 transition-all hover:scale-105 border-2 border-transparent hover:border-appPuzzleYellow">
             <div className="bg-white/20 rounded-full p-3 mr-4">
               <Newspaper className="h-12 w-12" />
             </div>
             <div className="flex flex-col flex-grow items-start gap-1">
               <span className="text-2xl font-semibold">Notícias</span>
-              <span className="text-xs text-blue-100 text-left">Notícias sobre autismo em geral</span>
+              <span className="text-xs text-red-100 text-left">Notícias sobre autismo em geral</span>
             </div>
           </Button>
         </Link>

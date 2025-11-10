@@ -58,6 +58,7 @@
     --app-puzzle-yellow: 45 95% 60%; /* Amarelo quebra-cabeça */
     --app-puzzle-green: 142 69% 40%; /* Verde quebra-cabeça (ajustado para mais escuro) */
     --app-accent: 208 92% 35%; /* Azul escuro para contraste */
+    --app-mid-red: 350 70% 50%; /* Novo vermelho de tom médio */
 
     /* Novas Cores da Paleta Randômica */
     --app-random-red: 357 65% 40%; /* #A6242F */
@@ -112,6 +113,7 @@
     --app-puzzle-yellow: 45 95% 70%;
     --app-puzzle-green: 142 69% 50%; /* Verde quebra-cabeça (ajustado para mais escuro) */
     --app-accent: 208 92% 45%;
+    --app-mid-red: 350 70% 60%; /* Novo vermelho de tom médio para modo escuro */
 
     /* Novas Cores da Paleta Randômica (Modo Escuro - ajustadas para visibilidade) */
     --app-random-red: 357 65% 50%;
