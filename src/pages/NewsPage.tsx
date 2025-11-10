@@ -21,7 +21,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn, getRandomAppRandomBgColorClass, getRandomAppRandomBorderColorClass } from "@/lib/utils"; // Importar funções de cor aleatória
+import { cn } from "@/lib/utils"; // Remover importação das funções de cor aleatória
 
 interface NewsArticle {
   id: string;
@@ -71,6 +71,10 @@ const NewsPage = () => {
     setIsDialogOpen(true);
   };
 
+  // Cores fixas para os cartões de notícias
+  const headerBgClass = "bg-appBluePrimary";
+  const cardBorderClass = "border-appBlueSecondary/20";
+
   return (
     <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
       <header className="py-4 flex items-center">
@@ -88,9 +92,6 @@ const NewsPage = () => {
         </p>
 
         {newsArticles.map((article) => {
-          const headerBgClass = getRandomAppRandomBgColorClass();
-          const cardBorderClass = getRandomAppRandomBorderColorClass();
-
           return (
             <Card key={article.id} className={cn("w-full shadow-lg border-2 transition-all hover:scale-[1.02]", cardBorderClass)}>
               <CardHeader className={cn("text-white rounded-t-lg", headerBgClass)}>

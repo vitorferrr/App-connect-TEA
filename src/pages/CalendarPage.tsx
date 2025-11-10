@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn, getRandomAppRandomBgColorClass, getRandomAppRandomBorderColorClass } from "@/lib/utils"; // Importar funções de cor aleatória
+import { cn } from "@/lib/utils"; // Remover importação das funções de cor aleatória
 
 interface Activity {
   id: string;
@@ -147,8 +147,9 @@ const CalendarPage = () => {
     String(i).padStart(2, "0")
   );
 
-  const calendarCardBgClass = useMemo(() => getRandomAppRandomBgColorClass(), []);
-  const calendarCardBorderClass = useMemo(() => getRandomAppRandomBorderColorClass(), []);
+  // Cores fixas para o cartão do calendário
+  const calendarCardBgClass = "bg-appBluePrimary";
+  const calendarCardBorderClass = "border-appBlueSecondary/20";
 
   return (
     <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
