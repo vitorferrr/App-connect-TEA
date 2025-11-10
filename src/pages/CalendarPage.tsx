@@ -37,7 +37,16 @@ interface Activity {
   description: string;
   location: string;
   time: string;
+  color: string; // Nova propriedade para a cor da atividade
 }
+
+const predefinedColors = [
+  { name: "Azul Primário", value: "bg-appBluePrimary" },
+  { name: "Verde Quebra-Cabeça", value: "bg-appPuzzleGreen" },
+  { name: "Vermelho Médio", value: "bg-appMidRed" },
+  { name: "Amarelo Quebra-Cabeça", value: "bg-appPuzzleYellow" },
+  { name: "Azul Escuro", value: "bg-appAccent" },
+];
 
 const CalendarPage = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -47,6 +56,8 @@ const CalendarPage = () => {
   const [newActivityLocation, setNewActivityLocation] = useState("");
   const [newActivityHour, setNewActivityHour] = useState("09");
   const [newActivityMinute, setNewActivityMinute] = useState("00");
+  const [selectedColorOption, setSelectedColorOption] = useState(predefinedColors[0].value); // Default color
+  const [customHexColor, setCustomHexColor] = useState("#000000"); // Default custom hex color
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showCustomLocationInput, setShowCustomLocationInput] = useState(false);
 
@@ -89,12 +100,15 @@ const CalendarPage = () => {
       return;
     }
 
+    const finalActivityColor = selectedColorOption === "custom" ? customHexColor : selectedColorOption;
+
     const newActivity: Activity = {
       id: Date.now().toString(),
       title: newActivityTitle.trim(),
       description: newActivityDescription.trim(),
       location: newActivityLocation.trim(),
       time: `${newActivityHour}:${newActivityMinute}`,
+      color: finalActivityColor, // Adiciona a cor final
     };
 
     setActivities((prevActivities) => ({
@@ -108,6 +122,8 @@ const CalendarPage = () => {
     setShowCustomLocationInput(false);
     setNewActivityHour("09");
     setNewActivityMinute("00");
+    setSelectedColorOption(predefinedColors[0].value); // Reset color selection
+    setCustomHexColor("#000000"); // Reset custom hex color
     setIsDialogOpen(false);
     toast.success("Atividade adicionada com sucesso!");
   };
@@ -265,6 +281,52 @@ const CalendarPage = () => {
                         </Select>
                       </div>
                     </div>
+                    {/* Nova seção para seleção de cor */}
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="color" className="text-right">
+                        Cor da Atividade
+                      </Label>
+                      <div className="col-span-3">
+                        <Select onValueChange={(value) => {
+                          setSelectedColorOption(value);
+                          if (value === "custom") {
+                            // Keep customHexColor or set a default if needed
+                          }
+                        }} value={selectedColorOption}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma cor">
+                              {selectedColorOption === "custom"
+                                ? "Cor Personalizada"
+                                : predefinedColors.find(c => c.value === selectedColorOption)?.name || "Selecione uma cor"}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {predefinedColors.map((color) => (
+                              <SelectItem key={color.value} value={color.value}>
+                                <div className="flex items-center gap-2">
+                                  <span className={cn("h-4 w-4 rounded-full", color.value)} />
+                                  {color.name}
+                                </div>
+                              </SelectItem>
+                            ))}
+                            <SelectItem value="custom">
+                              <div className="flex items-center gap-2">
+                                <span className="h-4 w-4 rounded-full bg-gradient-to-r from-red-500 via-green-500 to-blue-500" />
+                                Cor Personalizada
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {selectedColorOption === "custom" && (
+                          <Input
+                            type="color"
+                            value={customHexColor}
+                            onChange={(e) => setCustomHexColor(e.target.value)}
+                            className="mt-2 h-8 w-full"
+                          />
+                        )}
+                      </div>
+                    </div>
                   </div>
                   <DialogFooter>
                     <Button type="submit" onClick={handleAddActivity}>
@@ -278,14 +340,21 @@ const CalendarPage = () => {
               {activitiesForSelectedDate.length > 0 ? (
                 <ul className="space-y-3">
                   {activitiesForSelectedDate.map((activity) => (
-                    <li key={activity.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-md shadow-sm">
+                    <li
+                      key={activity.id}
+                      className={cn(
+                        "flex items-center justify-between p-3 rounded-md shadow-sm text-white", // Default text to white
+                        !activity.color.startsWith("#") && activity.color // Apply Tailwind class if not hex
+                      )}
+                      style={activity.color.startsWith("#") ? { backgroundColor: activity.color } : {}} // Apply inline style for hex
+                    >
                       <div>
-                        <h3 className="font-semibold text-gray-800">{activity.title}</h3>
+                        <h3 className="font-semibold">{activity.title}</h3>
                         {activity.description && (
-                          <p className="text-sm text-gray-600">{activity.description}</p>
+                          <p className="text-sm">{activity.description}</p>
                         )}
                         {(activity.location || activity.time) && (
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs">
                             {activity.time && `⏰ ${activity.time}`}
                             {activity.time && activity.location && " | "}
                             {activity.location && `📍 ${activity.location}`}
@@ -296,7 +365,7 @@ const CalendarPage = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDeleteActivity(activity.id)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-white hover:text-red-300"
                       >
                         <Trash2 className="h-5 w-5" />
                       </Button>
