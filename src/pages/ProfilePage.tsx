@@ -150,9 +150,9 @@ const ProfilePage = () => {
         </Card>
 
         {/* Action Buttons */}
-        <Link to="/settings" className="w-full"> {/* Atualizado para Link */}
+        <Link to="/edit-profile" className="w-full"> {/* Atualizado para Link */}
           <Button className="w-full h-12 bg-blue-100 hover:bg-blue-200 text-blue-700 text-lg flex items-center justify-start rounded-full shadow-sm px-6">
-            <Settings className="h-6 w-6 mr-3" /> Configurações
+            <Settings className="h-6 w-6 mr-3" /> Editar Perfil
           </Button>
         </Link>
         <Button
