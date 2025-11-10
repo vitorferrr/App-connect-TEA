@@ -20,55 +20,85 @@ import {
   SelectValue,
 }
 from "@/components/ui/select";
-import { parse, subMonths, isAfter, isValid } from "date-fns";
+import { parse, subMonths, isAfter, isValid, format } from "date-fns"; // Import format
 import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import AddReportDialog from "@/components/AddReportDialog"; // Importar o novo componente
+import AddReportDialog from "@/components/AddReportDialog";
 
 interface Report {
   id: string;
   title: string;
   date: string; // Stored as string, parsed to Date for filtering
   content: string;
-  report_type: string; // New field
+  report_type: string;
 }
 
-// Helper function to parse Brazilian date format
-const parseBrazilianDate = (dateString: string): Date | null => {
-  const parsedDate = parse(dateString, "yyyy-MM-dd", new Date(), { locale: ptBR }); // Assuming YYYY-MM-DD from Supabase
+// Helper function to parse Brazilian date format, made more robust
+const parseBrazilianDate = (dateString: string | null | undefined): Date | null => {
+  if (typeof dateString !== 'string' || !dateString.trim()) {
+    return null;
+  }
+  const parsedDate = parse(dateString, "yyyy-MM-dd", new Date(), { locale: ptBR });
   return isValid(parsedDate) ? parsedDate : null;
 };
 
 const ReportsPage = () => {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState("recent"); // Default filter for date
-  const [selectedReportType, setSelectedReportType] = useState("all"); // Default filter for type
+  const [selectedFilter, setSelectedFilter] = useState("recent");
+  const [selectedReportType, setSelectedReportType] = useState("all");
   const [isAddReportDialogOpen, setIsAddReportDialogOpen] = useState(false);
+  const [childName, setChildName] = useState("da Criança"); // State to hold child's name
 
   const fetchReports = useCallback(async () => {
     setLoading(true);
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    try {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      toast.error("Erro ao carregar usuário. Por favor, faça login novamente.");
+      if (userError || !user) {
+        toast.error("Erro ao carregar usuário. Por favor, faça login novamente.");
+        setLoading(false);
+        return;
+      }
+
+      // Fetch reports
+      const { data: reportsData, error: reportsError } = await supabase
+        .from("reports")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("date", { ascending: false });
+
+      if (reportsError) {
+        toast.error("Erro ao carregar relatórios: " + reportsError.message);
+        setReports([]);
+      } else {
+        setReports(reportsData || []);
+      }
+
+      // Fetch child's name from profile
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("child_name")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) {
+        console.error("Erro ao carregar nome da criança:", profileError.message);
+        setChildName("da Criança"); // Fallback
+      } else if (profileData?.child_name) {
+        setChildName(profileData.child_name);
+      } else {
+        setChildName("da Criança"); // Fallback if child_name is null
+      }
+
+    } catch (error: any) {
+      toast.error("Ocorreu um erro inesperado ao carregar dados: " + error.message);
+      setReports([]);
+      setChildName("da Criança");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const { data, error } = await supabase
-      .from("reports")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("date", { ascending: false }); // Order by date descending by default
-
-    if (error) {
-      toast.error("Erro ao carregar relatórios: " + error.message);
-    } else {
-      setReports(data || []);
-    }
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -94,7 +124,6 @@ const ReportsPage = () => {
       const sixMonthsAgo = subMonths(now, 6);
       filtered = filtered.filter(report => report.parsedDate && isAfter(report.parsedDate, sixMonthsAgo));
     }
-    // "all" and "recent" don't need initial filtering based on date range
 
     // Filter by report type
     if (selectedReportType !== "all") {
@@ -103,7 +132,7 @@ const ReportsPage = () => {
 
     // Always sort from most recent to oldest
     return filtered.sort((a, b) => {
-      if (!a.parsedDate || !b.parsedDate) return 0; // Handle cases where date parsing failed
+      if (!a.parsedDate || !b.parsedDate) return 0;
       return b.parsedDate.getTime() - a.parsedDate.getTime();
     });
   }, [selectedFilter, selectedReportType, reportsWithParsedDates]);
@@ -124,12 +153,12 @@ const ReportsPage = () => {
             <ArrowLeft className="h-6 w-6" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-appBluePrimary ml-4">Relatórios de Hugo</h1>
+        <h1 className="text-2xl font-bold text-appBluePrimary ml-4">Relatórios de {childName}</h1>
       </header>
 
       <main className="flex-grow flex flex-col items-center w-full max-w-md mx-auto space-y-4">
         <p className="text-lg text-appAccent/80 text-center mb-4">
-          Acompanhe o desenvolvimento de Hugo na escola.
+          Acompanhe o desenvolvimento de {childName} na escola.
         </p>
 
         <div className="w-full flex justify-between gap-2 mb-4">
@@ -169,14 +198,14 @@ const ReportsPage = () => {
                   <AccordionItem key={report.id} value={report.id}>
                     <AccordionTrigger className="text-left text-base font-medium text-gray-800 hover:no-underline">
                       <div className="flex flex-col items-start">
-                        <span>{report.title}</span>
+                        <span>{report.title || "Sem Título"}</span>
                         <span className="text-sm text-gray-500 font-normal">
-                          {format(parseBrazilianDate(report.date) || new Date(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} - {report.report_type}
+                          {report.parsedDate ? format(report.parsedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Data Desconhecida"} - {report.report_type || "Tipo Desconhecido"}
                         </span>
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="text-gray-700 text-sm p-2 border-t mt-2 pt-2">
-                      {report.content}
+                      {report.content || "Sem conteúdo."}
                     </AccordionContent>
                   </AccordionItem>
                 ))}
