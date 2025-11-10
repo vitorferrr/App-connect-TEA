@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, PlusCircle, Download } from "lucide-react";
+import { ArrowLeft, PlusCircle, Download, FileTextIcon, ImageIcon } from "lucide-react"; // Adicionado FileTextIcon, ImageIcon
 import BottomNavBar from "@/components/BottomNavBar";
 import {
   Accordion,
@@ -33,6 +33,7 @@ interface Report {
   date: string;
   content: string;
   report_type: string;
+  attachments: string[] | null; // Adicionado campo attachments
 }
 
 // Helper function to parse Brazilian date format, made more robust
@@ -63,10 +64,10 @@ const ReportsPage = () => {
         return;
       }
 
-      // Fetch reports
+      // Buscar relatórios, incluindo a nova coluna 'attachments'
       const { data: reportsData, error: reportsError } = await supabase
         .from("reports")
-        .select("*")
+        .select("*, attachments") // Selecionar attachments
         .eq("user_id", user.id)
         .order("date", { ascending: false });
 
@@ -77,7 +78,7 @@ const ReportsPage = () => {
         setReports(reportsData || []);
       }
 
-      // Fetch child's name from profile
+      // Buscar nome da criança do perfil
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("child_name")
@@ -155,8 +156,28 @@ const ReportsPage = () => {
     doc.setFontSize(12);
     doc.text(report.content, 14, 68, { maxWidth: 180 });
 
+    // Adicionar anexos ao PDF
+    if (report.attachments && report.attachments.length > 0) {
+      let yPos = 100; // Posição inicial para anexos
+      doc.setFontSize(14);
+      doc.text("Anexos:", 14, yPos + 10);
+      doc.setFontSize(10);
+      report.attachments.forEach((url, index) => {
+        yPos += 7;
+        doc.text(`- Anexo ${index + 1}: ${url}`, 14, yPos);
+      });
+    }
+
     doc.save(fileName);
     toast.success("Relatório baixado com sucesso como PDF!");
+  };
+
+  const getFileIcon = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) {
+      return <ImageIcon className="h-4 w-4 text-blue-500" />;
+    }
+    return <FileTextIcon className="h-4 w-4 text-gray-500" />;
   };
 
   if (loading) {
@@ -229,7 +250,7 @@ const ReportsPage = () => {
                         variant="ghost"
                         size="icon"
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent accordion from toggling
+                          e.stopPropagation(); // Prevenir que o acordeão seja acionado
                           handleDownloadReport(report);
                         }}
                         className="text-appPuzzleYellow hover:bg-appPuzzleYellow/20 ml-2"
@@ -239,6 +260,25 @@ const ReportsPage = () => {
                     </AccordionTrigger>
                     <AccordionContent className="text-gray-700 text-sm p-2 border-t mt-2 pt-2">
                       {report.content || "Sem conteúdo."}
+                      {report.attachments && report.attachments.length > 0 && (
+                        <div className="mt-4">
+                          <p className="font-semibold text-gray-800 mb-2">Anexos:</p>
+                          <div className="space-y-2">
+                            {report.attachments.map((attachmentUrl, index) => (
+                              <a
+                                key={index}
+                                href={attachmentUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 text-blue-600 hover:underline text-sm"
+                              >
+                                {getFileIcon(attachmentUrl)}
+                                {attachmentUrl.split('/').pop()} {/* Exibir nome do arquivo a partir da URL */}
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </AccordionContent>
                   </AccordionItem>
                 ))}
