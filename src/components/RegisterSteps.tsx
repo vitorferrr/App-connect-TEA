@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, CheckCircle2, Eye, EyeOff } from "lucide-react"; // Importar Eye e EyeOff
+import { ArrowLeft, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,8 +25,7 @@ const RegisterSteps = () => {
     confirmEmail: "",
     password: "",
     confirmPassword: "",
-    firstName: "",
-    lastName: "",
+    firstName: "", // Agora será usado para o nome completo
     age: "", // This field is used for phone_number in profiles table
     address: "",
     complement: "",
@@ -37,8 +36,8 @@ const RegisterSteps = () => {
     otp: "",
   });
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // Novo estado para visibilidade da senha
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Novo estado para visibilidade da confirmação de senha
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   // Password validation states
@@ -90,8 +89,7 @@ const RegisterSteps = () => {
           password: formData.password,
           options: {
             data: {
-              first_name: formData.firstName, 
-              last_name: formData.lastName,   
+              first_name: formData.firstName, // Usando firstName para o nome completo
               user_type: 'responsavel', 
             },
           },
@@ -111,7 +109,7 @@ const RegisterSteps = () => {
           navigate("/home");
         }
       } else if (step === 2) {
-        if (!formData.firstName || !formData.lastName || !formData.age || !formData.address) {
+        if (!formData.firstName || !formData.age || !formData.address) { // Removido lastName da validação
           toast.error("Por favor, preencha todos os campos obrigatórios.");
           setLoading(false);
           return;
@@ -128,8 +126,7 @@ const RegisterSteps = () => {
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
-            first_name: formData.firstName,
-            last_name: formData.lastName,
+            first_name: formData.firstName, // Usando firstName para o nome completo
             phone_number: formData.age, 
           })
           .eq('id', user.id);
@@ -172,10 +169,6 @@ const RegisterSteps = () => {
         }
         setStep(step + 1);
       } else if (step === 4) {
-        // This step is for OTP verification.
-        // Supabase usually handles email confirmation via a link.
-        // If the user needs to enter an OTP, it would be for a specific flow like phone auth or email OTP sign-in.
-        // For now, we'll simulate success and move to confirmation.
         toast.success("Código verificado (simulado).");
         setStep(step + 1);
       }
@@ -222,7 +215,7 @@ const RegisterSteps = () => {
               <Label htmlFor="confirmEmail">Confirmar E-mail *</Label>
               <Input id="confirmEmail" type="email" placeholder="Ex: mariajose1995@gmail.com" required value={formData.confirmEmail} onChange={handleChange} />
             </div>
-            <div className="grid gap-2 relative"> {/* Adicionado relative */}
+            <div className="grid gap-2 relative">
               <Label htmlFor="password">Senha *</Label>
               <Input id="password" type={showPassword ? "text" : "password"} placeholder="Ex: Porta12@" required value={formData.password} onChange={handleChange} className="pr-10" />
               <Button
@@ -240,7 +233,7 @@ const RegisterSteps = () => {
                 <PasswordRequirement met={hasUpperCase} text="Pelo menos 1 letra maiúscula" />
               </div>
             </div>
-            <div className="grid gap-2 relative"> {/* Adicionado relative */}
+            <div className="grid gap-2 relative">
               <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
               <Input id="confirmPassword" type={showConfirmPassword ? "text" : "password"} placeholder="Ex: Porta12@" required value={formData.confirmPassword} onChange={handleChange} className="pr-10" />
               <Button
@@ -261,10 +254,6 @@ const RegisterSteps = () => {
             <div className="grid gap-2">
               <Label htmlFor="firstName">Nome Completo do Responsável *</Label>
               <Input id="firstName" type="text" placeholder="Ex: Maria José dos Santos Silva" required value={formData.firstName} onChange={handleChange} />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="lastName">Sobrenome do Responsável *</Label>
-              <Input id="lastName" type="text" placeholder="Ex: Silva" required value={formData.lastName} onChange={handleChange} />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="age">Telefone *</Label>
@@ -351,7 +340,7 @@ const RegisterSteps = () => {
             <h3 className="text-lg font-semibold text-blue-800">Confirmação de Dados</h3>
             <p><strong>E-mail:</strong> {formData.email}</p>
             <p><strong>Senha:</strong> ********</p>
-            <p><strong>Nome Completo do Responsável:</strong> {formData.firstName} {formData.lastName}</p>
+            <p><strong>Nome Completo do Responsável:</strong> {formData.firstName}</p> {/* Atualizado */}
             <p><strong>Telefone:</strong> {formData.age}</p>
             <p><strong>Endereço:</strong> {formData.address}</p>
             {formData.complement && <p><strong>Complemento:</strong> {formData.complement}</p>}
