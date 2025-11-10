@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import BottomNavBar from "@/components/BottomNavBar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Importar AvatarImage
 
 const EditProfilePage = () => {
   const [firstName, setFirstName] = useState("");
@@ -25,6 +26,9 @@ const EditProfilePage = () => {
   const [childDob, setChildDob] = useState<Date | undefined>(undefined);
   const [schoolName, setSchoolName] = useState("");
   const [className, setClassName] = useState("");
+  const [currentAvatarUrl, setCurrentAvatarUrl] = useState<string | null>(null); // URL do avatar atual
+  const [avatarFile, setAvatarFile] = useState<File | null>(null); // Arquivo de avatar selecionado
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null); // URL de pré-visualização do novo avatar
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -42,7 +46,7 @@ const EditProfilePage = () => {
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('first_name, last_name, phone_number, child_name, child_dob, school_name, class_name')
+        .select('first_name, last_name, phone_number, child_name, child_dob, school_name, class_name, avatar_url')
         .eq('id', user.id)
         .single();
 
@@ -60,12 +64,24 @@ const EditProfilePage = () => {
         setChildDob(data.child_dob ? (isValid(parseISO(data.child_dob)) ? parseISO(data.child_dob) : undefined) : undefined);
         setSchoolName(data.school_name || "");
         setClassName(data.class_name || "");
+        setCurrentAvatarUrl(data.avatar_url); // Definir URL do avatar atual
       }
       setLoading(false);
     };
 
     fetchProfile();
   }, [navigate]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setAvatarFile(file);
+      setAvatarPreviewUrl(URL.createObjectURL(file)); // Criar URL de pré-visualização
+    } else {
+      setAvatarFile(null);
+      setAvatarPreviewUrl(null);
+    }
+  };
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,6 +92,34 @@ const EditProfilePage = () => {
       toast.error("Usuário não autenticado. Por favor, faça login novamente.");
       setLoading(false);
       return;
+    }
+
+    let newAvatarUrl = currentAvatarUrl;
+
+    // Se um novo arquivo de avatar foi selecionado, faça o upload
+    if (avatarFile) {
+      const fileExtension = avatarFile.name.split('.').pop();
+      const filePath = `${user.id}/avatar.${fileExtension}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, avatarFile, {
+          cacheControl: '3600',
+          upsert: true, // Sobrescreve o arquivo existente se houver
+        });
+
+      if (uploadError) {
+        toast.error("Erro ao fazer upload da foto de perfil: " + uploadError.message);
+        setLoading(false);
+        return;
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+      
+      if (publicUrlData?.publicUrl) {
+        newAvatarUrl = publicUrlData.publicUrl;
+      }
     }
 
     try {
@@ -89,6 +133,7 @@ const EditProfilePage = () => {
           child_dob: childDob ? format(childDob, "yyyy-MM-dd") : null,
           school_name: schoolName,
           class_name: className,
+          avatar_url: newAvatarUrl, // Atualiza com a nova URL do avatar
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -114,6 +159,10 @@ const EditProfilePage = () => {
     );
   }
 
+  const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
       <header className="py-4 flex items-center">
@@ -129,6 +178,25 @@ const EditProfilePage = () => {
       </header>
 
       <main className="flex-grow flex flex-col items-center w-full max-w-md mx-auto space-y-4">
+        <Card className="w-full p-6 shadow-md">
+          <CardTitle className="text-lg font-semibold text-gray-800 mb-4">Foto de Perfil</CardTitle>
+          <CardContent className="p-0 flex flex-col items-center gap-4">
+            <Avatar className="h-24 w-24 bg-blue-600 text-white text-3xl font-bold flex items-center justify-center">
+              {avatarPreviewUrl ? (
+                <AvatarImage src={avatarPreviewUrl} alt="Pré-visualização do Avatar" />
+              ) : currentAvatarUrl ? (
+                <AvatarImage src={currentAvatarUrl} alt="Avatar Atual" />
+              ) : (
+                <AvatarFallback>{getInitials(firstName, lastName)}</AvatarFallback>
+              )}
+            </Avatar>
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="avatar">Escolher nova foto</Label>
+              <Input id="avatar" type="file" accept="image/*" onChange={handleFileChange} />
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="w-full p-6 shadow-md">
           <CardTitle className="text-lg font-semibold text-gray-800 mb-4">Informações Pessoais</CardTitle>
           <CardContent className="p-0 space-y-4">

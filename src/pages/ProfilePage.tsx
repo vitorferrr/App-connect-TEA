@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Mail, Phone, Settings, LogOut, Eye, EyeOff } from "lucide-react"; // Importando Eye e EyeOff
 import BottomNavBar from "@/components/BottomNavBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Importar AvatarImage
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -16,6 +16,7 @@ interface Profile {
   user_type: string;
   phone_number: string;
   email: string; // Email comes from auth.users, not profiles table directly
+  avatar_url: string | null; // Adicionado avatar_url
 }
 
 const ProfilePage = () => {
@@ -38,7 +39,7 @@ const ProfilePage = () => {
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('first_name, last_name, user_type, phone_number')
+        .select('first_name, last_name, user_type, phone_number, avatar_url') // Selecionar avatar_url
         .eq('id', user.id)
         .single();
 
@@ -110,7 +111,11 @@ const ProfilePage = () => {
         {/* Profile Summary Card */}
         <Card className="w-full p-6 flex flex-col items-center shadow-md">
           <Avatar className="h-24 w-24 mb-4 bg-blue-600 text-white text-3xl font-bold flex items-center justify-center">
-            <AvatarFallback>{getInitials(profile.first_name, profile.last_name)}</AvatarFallback>
+            {profile.avatar_url ? (
+              <AvatarImage src={profile.avatar_url} alt="Avatar do Usuário" />
+            ) : (
+              <AvatarFallback>{getInitials(profile.first_name, profile.last_name)}</AvatarFallback>
+            )}
           </Avatar>
           <h2 className="text-xl font-semibold text-gray-800">{profile.first_name} {profile.last_name}</h2>
           <p className="text-sm text-gray-500">{profile.user_type}</p>
