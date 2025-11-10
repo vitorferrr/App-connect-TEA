@@ -69,7 +69,7 @@ const AddReportDialog = ({ isOpen, onOpenChange, onReportAdded }: AddReportDialo
         return;
       }
 
-      const { error: reportError } = await supabase.from("reports").insert({
+      const { error } = await supabase.from("reports").insert({
         user_id: user.id,
         title: title.trim(),
         content: content.trim(),
@@ -77,25 +77,13 @@ const AddReportDialog = ({ isOpen, onOpenChange, onReportAdded }: AddReportDialo
         report_type: reportType,
       });
 
-      if (reportError) {
-        toast.error("Erro ao adicionar relatório: " + reportError.message);
+      if (error) {
+        toast.error("Erro ao adicionar relatório: " + error.message);
       } else {
-        // Add a notification
-        const notificationMessage = `Novo relatório "${title.trim()}" (${reportType}) adicionado em ${format(date, "dd/MM/yyyy", { locale: ptBR })}.`;
-        const { error: notificationError } = await supabase.from("notifications").insert({
-          user_id: user.id,
-          message: notificationMessage,
-        });
-
-        if (notificationError) {
-          console.error("Erro ao adicionar notificação:", notificationError.message);
-          // We don't toast this error to the user as the report was successfully added.
-        }
-
         toast.success("Relatório adicionado com sucesso!");
         resetForm();
         onOpenChange(false);
-        onReportAdded(); // Notify parent to refresh reports and potentially notifications
+        onReportAdded(); // Notify parent to refresh reports
       }
     } catch (error: any) {
       toast.error("Ocorreu um erro inesperado: " + error.message);
