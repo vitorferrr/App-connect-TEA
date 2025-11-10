@@ -18,6 +18,8 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
   const navigate = useNavigate();
   const location = useLocation();
 
+  const authPaths = ["/", "/login", "/register", "/forgot-password", "/update-password"];
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, currentSession) => {
       setSession(currentSession);
@@ -25,12 +27,12 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
 
       if (currentSession) {
         // User is logged in
-        if (location.pathname === "/" || location.pathname === "/login" || location.pathname === "/register") {
+        if (authPaths.includes(location.pathname)) {
           navigate("/home");
         }
       } else {
         // User is logged out
-        if (location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/register") {
+        if (!authPaths.includes(location.pathname)) {
           navigate("/");
         }
       }
@@ -41,11 +43,11 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
       setSession(initialSession);
       setLoading(false);
       if (initialSession) {
-        if (location.pathname === "/" || location.pathname === "/login" || location.pathname === "/register") {
+        if (authPaths.includes(location.pathname)) {
           navigate("/home");
         }
       } else {
-        if (location.pathname !== "/" && location.pathname !== "/login" && location.pathname !== "/register") {
+        if (!authPaths.includes(location.pathname)) {
           navigate("/");
         }
       }

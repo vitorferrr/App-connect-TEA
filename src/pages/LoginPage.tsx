@@ -88,6 +88,9 @@ const LoginPage = () => {
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
             </div>
+            <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline text-right -mt-2">
+              Esqueceu a senha?
+            </Link>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Entrando..." : "Login"}
             </Button>
