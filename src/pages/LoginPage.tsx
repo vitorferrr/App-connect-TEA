@@ -9,12 +9,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import AuthLayout from "@/components/AuthLayout";
-import GoogleSignInButton from "@/components/GoogleSignInButton"; // Importar o botão do Google
+import GoogleSignInButton from "@/components/GoogleSignInButton";
+import { Eye, EyeOff } from "lucide-react"; // Importar ícones de olho
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Novo estado para visibilidade da senha
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -36,7 +38,7 @@ const LoginPage = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/home`, // Redireciona para a home após login/cadastro
+        redirectTo: `${window.location.origin}/home`,
       },
     });
 
@@ -44,7 +46,6 @@ const LoginPage = () => {
       toast.error("Erro ao fazer login com o Google: " + error.message);
       setLoading(false);
     }
-    // Supabase lida com o redirecionamento, então não precisamos de navigate aqui em caso de sucesso.
   };
 
   return (
@@ -67,15 +68,25 @@ const LoginPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="grid gap-2">
+            <div className="grid gap-2 relative"> {/* Adicionado relative para posicionar o ícone */}
               <Label htmlFor="password">Senha</Label>
               <Input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"} // Alterna o tipo do input
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="pr-10" // Adiciona padding à direita para o ícone
               />
+              <Button
+                type="button" // Importante para não submeter o formulário
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowPassword(!showPassword)} // Alterna a visibilidade
+                className="absolute right-2 top-1/2 -translate-y-1/2 mt-2 h-8 w-8 text-gray-500 hover:bg-transparent"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Entrando..." : "Login"}

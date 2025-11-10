@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Eye, EyeOff } from "lucide-react"; // Importar Eye e EyeOff
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,6 +37,8 @@ const RegisterSteps = () => {
     otp: "",
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Novo estado para visibilidade da senha
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Novo estado para visibilidade da confirmação de senha
   const navigate = useNavigate();
 
   // Password validation states
@@ -220,18 +222,36 @@ const RegisterSteps = () => {
               <Label htmlFor="confirmEmail">Confirmar E-mail *</Label>
               <Input id="confirmEmail" type="email" placeholder="Ex: mariajose1995@gmail.com" required value={formData.confirmEmail} onChange={handleChange} />
             </div>
-            <div className="grid gap-2">
+            <div className="grid gap-2 relative"> {/* Adicionado relative */}
               <Label htmlFor="password">Senha *</Label>
-              <Input id="password" type="password" placeholder="Ex: Porta12@" required value={formData.password} onChange={handleChange} />
+              <Input id="password" type={showPassword ? "text" : "password"} placeholder="Ex: Porta12@" required value={formData.password} onChange={handleChange} className="pr-10" />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 mt-2 h-8 w-8 text-gray-500 hover:bg-transparent"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
               <div className="mt-1 space-y-1">
                 <PasswordRequirement met={hasMinLength} text="Mínimo de 8 caracteres" />
                 <PasswordRequirement met={hasSpecialChar} text="Pelo menos 1 Caractere especial (!@#$)" />
                 <PasswordRequirement met={hasUpperCase} text="Pelo menos 1 letra maiúscula" />
               </div>
             </div>
-            <div className="grid gap-2">
+            <div className="grid gap-2 relative"> {/* Adicionado relative */}
               <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
-              <Input id="confirmPassword" type="password" placeholder="Ex: Porta12@" required value={formData.confirmPassword} onChange={handleChange} />
+              <Input id="confirmPassword" type={showConfirmPassword ? "text" : "password"} placeholder="Ex: Porta12@" required value={formData.confirmPassword} onChange={handleChange} className="pr-10" />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 mt-2 h-8 w-8 text-gray-500 hover:bg-transparent"
+              >
+                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
             </div>
           </>
         );
