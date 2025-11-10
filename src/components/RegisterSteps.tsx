@@ -230,7 +230,7 @@ const RegisterSteps = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 mt-2 h-8 w-8 text-gray-500 hover:bg-transparent"
+                className="absolute right-2 top-1/2 -translate-y-1/2 mt-3 h-8 w-8 text-gray-500 hover:bg-transparent"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
@@ -248,7 +248,7 @@ const RegisterSteps = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 mt-2 h-8 w-8 text-gray-500 hover:bg-transparent"
+                className="absolute right-2 top-1/2 -translate-y-1/2 mt-3 h-8 w-8 text-gray-500 hover:bg-transparent"
               >
                 {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
