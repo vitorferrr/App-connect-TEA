@@ -50,11 +50,14 @@
 
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Novas cores para o layout do aplicativo */
-    --app-bg-light: 30 10% 95%; /* Um bege claro */
-    --app-blue-dark: 210 50% 25%; /* Um azul escuro */
-    --app-blue-medium: 210 60% 45%; /* Um azul médio */
-    --app-yellow-active: 45 100% 60%; /* Um amarelo vibrante */
+    /* Cores do aplicativo - Paleta TEA */
+    --app-bg-light: 210 100% 97%; /* Azul muito claro de fundo */
+    --app-blue-primary: 208 92% 45%; /* Azul autismo primário */
+    --app-blue-secondary: 201 79% 55%; /* Azul secundário */
+    --app-puzzle-red: 355 78% 60%; /* Vermelho quebra-cabeça */
+    --app-puzzle-yellow: 45 95% 60%; /* Amarelo quebra-cabeça */
+    --app-puzzle-green: 142 69% 50%; /* Verde quebra-cabeça */
+    --app-accent: 208 92% 35%; /* Azul escuro para contraste */
   }
 
   .dark {
@@ -94,11 +97,14 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Novas cores para o layout do aplicativo no modo escuro (ajustar conforme necessário) */
-    --app-bg-light: 222.2 84% 4.9%; /* Usar o background escuro padrão */
-    --app-blue-dark: 210 50% 25%; /* Manter o azul escuro */
-    --app-blue-medium: 210 60% 45%; /* Manter o azul médio */
-    --app-yellow-active: 45 100% 60%; /* Manter o amarelo */
+    /* Cores do aplicativo no modo escuro - Paleta TEA */
+    --app-bg-light: 222.2 84% 4.9%;
+    --app-blue-primary: 208 92% 55%;
+    --app-blue-secondary: 201 79% 65%;
+    --app-puzzle-red: 355 78% 70%;
+    --app-puzzle-yellow: 45 95% 70%;
+    --app-puzzle-green: 142 69% 60%;
+    --app-accent: 208 92% 45%;
   }
 }
 

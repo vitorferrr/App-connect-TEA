@@ -58,20 +58,19 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm p-4 flex items-center border-b border-gray-200">
+    <div className="min-h-screen flex flex-col bg-appBgLight">
+      <header className="bg-appBluePrimary shadow-md p-4 flex items-center">
         <Link to="/home">
-          <Button variant="ghost" size="icon" className="text-gray-700">
+          <Button variant="ghost" size="icon" className="text-white hover:bg-appBlueSecondary">
             <ArrowLeft className="h-6 w-6" />
           </Button>
         </Link>
-        <Avatar className="h-10 w-10 ml-4 bg-blue-600 text-white flex items-center justify-center text-lg font-semibold">
+        <Avatar className="h-10 w-10 ml-4 bg-appPuzzleYellow text-appAccent flex items-center justify-center text-lg font-semibold">
           <AvatarFallback>P</AvatarFallback>
         </Avatar>
         <div className="ml-3">
-          <h1 className="text-lg font-semibold text-gray-800">Profissional Ana</h1>
-          <p className="text-sm text-green-500">Online</p>
+          <h1 className="text-lg font-semibold text-white">Profissional Ana</h1>
+          <p className="text-sm text-appPuzzleGreen">Online</p>
         </div>
       </header>
 
@@ -87,17 +86,17 @@ const ChatPage = () => {
           >
             <div
               className={cn(
-                "max-w-[70%] p-3 rounded-lg shadow-sm",
+                "max-w-[70%] p-3 rounded-lg shadow-md",
                 msg.sender === "me"
-                  ? "bg-appBlueMedium text-white rounded-br-none"
-                  : "bg-gray-200 text-gray-800 rounded-bl-none"
+                  ? "bg-appBluePrimary text-white rounded-br-none"
+                  : "bg-white text-gray-800 rounded-bl-none border-2 border-appBlueSecondary/20"
               )}
             >
               <p className="text-sm">{msg.text}</p>
               <span
                 className={cn(
                   "block text-xs mt-1",
-                  msg.sender === "me" ? "text-blue-100 text-right" : "text-gray-500 text-left"
+                  msg.sender === "me" ? "text-blue-100 text-right" : "text-appAccent/60 text-left"
                 )}
               >
                 {msg.time}
@@ -107,11 +106,10 @@ const ChatPage = () => {
         ))}
       </main>
 
-      {/* Message Input Area */}
-      <div className="sticky bottom-16 left-0 right-0 bg-white p-4 border-t border-gray-200 flex items-center">
+      <div className="sticky bottom-16 left-0 right-0 bg-white p-4 border-t-2 border-appBlueSecondary/20 flex items-center shadow-lg">
         <Input
           placeholder="Digite sua mensagem..."
-          className="flex-grow rounded-full px-4 py-2 border-gray-300 focus:ring-appBlueMedium focus:border-appBlueMedium"
+          className="flex-grow rounded-full px-4 py-2 border-2 border-appBlueSecondary/30 focus:ring-appBluePrimary focus:border-appBluePrimary"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyPress={(e) => {
@@ -122,7 +120,7 @@ const ChatPage = () => {
         />
         <Button
           size="icon"
-          className="ml-3 rounded-full bg-appBlueMedium hover:bg-appBlueDark text-white"
+          className="ml-3 rounded-full bg-appBluePrimary hover:bg-appAccent text-white shadow-md transition-all hover:scale-110"
           onClick={handleSendMessage}
         >
           <Send className="h-5 w-5" />

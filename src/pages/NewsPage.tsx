@@ -71,30 +71,30 @@ const NewsPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-purple-50 p-4 pb-20">
+    <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
       <header className="py-4 flex items-center">
         <Link to="/home">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="text-appBluePrimary hover:bg-appBlueSecondary/20">
             <ArrowLeft className="h-6 w-6" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-blue-700 ml-4">Notícias TEA</h1>
+        <h1 className="text-2xl font-bold text-appBluePrimary ml-4">Notícias TEA</h1>
       </header>
 
       <main className="flex-grow flex flex-col items-center w-full max-w-md mx-auto space-y-4">
-        <p className="text-lg text-gray-600 text-center mb-4">
+        <p className="text-lg text-appAccent/80 text-center mb-4">
           Mantenha-se atualizado com as últimas notícias e informações sobre o autismo.
         </p>
 
         {newsArticles.map((article) => (
-          <Card key={article.id} className="w-full shadow-md">
-            <CardHeader>
-              <CardTitle className="text-xl text-blue-800">{article.title}</CardTitle>
-              <CardDescription className="text-sm text-gray-500">{article.date}</CardDescription>
+          <Card key={article.id} className="w-full shadow-lg border-2 border-appBlueSecondary/20 hover:border-appPuzzleYellow transition-all">
+            <CardHeader className="bg-gradient-to-r from-appBlueSecondary to-appBluePrimary text-white rounded-t-lg">
+              <CardTitle className="text-xl">{article.title}</CardTitle>
+              <CardDescription className="text-sm text-blue-100">{article.date}</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-4">
               <p className="text-gray-700 mb-4">{article.summary}</p>
-              <Button onClick={() => handleReadMore(article)} className="w-full bg-appBlueMedium hover:bg-appBlueDark text-white">
+              <Button onClick={() => handleReadMore(article)} className="w-full bg-appBluePrimary hover:bg-appAccent text-white transition-all hover:scale-105">
                 Leia Mais
               </Button>
             </CardContent>

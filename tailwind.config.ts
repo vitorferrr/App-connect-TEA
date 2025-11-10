@@ -62,11 +62,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Novas cores para o layout do aplicativo
+        // Cores do aplicativo - Paleta TEA
         appBgLight: "hsl(var(--app-bg-light))",
-        appBlueDark: "hsl(var(--app-blue-dark))",
-        appBlueMedium: "hsl(var(--app-blue-medium))",
-        appYellowActive: "hsl(var(--app-yellow-active))",
+        appBluePrimary: "hsl(var(--app-blue-primary))",
+        appBlueSecondary: "hsl(var(--app-blue-secondary))",
+        appPuzzleRed: "hsl(var(--app-puzzle-red))",
+        appPuzzleYellow: "hsl(var(--app-puzzle-yellow))",
+        appPuzzleGreen: "hsl(var(--app-puzzle-green))",
+        appAccent: "hsl(var(--app-accent))",
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -99,24 +99,24 @@ const CalendarPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-purple-50 p-4 pb-20">
+    <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
       <header className="py-4 flex items-center">
         <Link to="/home">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="text-appBluePrimary hover:bg-appBlueSecondary/20">
             <ArrowLeft className="h-6 w-6" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-blue-700 ml-4">Cronograma</h1>
+        <h1 className="text-2xl font-bold text-appBluePrimary ml-4">Cronograma</h1>
       </header>
 
       <main className="flex-grow flex flex-col items-center w-full max-w-md mx-auto space-y-6">
-        <p className="text-lg text-gray-600 text-center">
+        <p className="text-lg text-appAccent/80 text-center">
           Gerencie as atividades e rotinas.
         </p>
 
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle className="text-xl text-blue-800">Calendário</CardTitle>
+        <Card className="w-full shadow-lg border-2 border-appPuzzleGreen/30">
+          <CardHeader className="bg-appPuzzleGreen text-white rounded-t-lg">
+            <CardTitle className="text-xl">Calendário</CardTitle>
           </CardHeader>
           <CardContent className="flex justify-center">
             <Calendar

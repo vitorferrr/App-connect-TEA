@@ -117,18 +117,18 @@ const ReportsPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-32"> {/* Increased padding-bottom */}
+    <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-32">
       <header className="py-4 flex items-center">
         <Link to="/home">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-6 w-6 text-blue-700" />
+          <Button variant="ghost" size="icon" className="text-appBluePrimary hover:bg-appBlueSecondary/20">
+            <ArrowLeft className="h-6 w-6" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold text-blue-700 ml-4">Relatórios de Hugo</h1>
+        <h1 className="text-2xl font-bold text-appBluePrimary ml-4">Relatórios de Hugo</h1>
       </header>
 
       <main className="flex-grow flex flex-col items-center w-full max-w-md mx-auto space-y-4">
-        <p className="text-lg text-gray-600 text-center mb-4">
+        <p className="text-lg text-appAccent/80 text-center mb-4">
           Acompanhe o desenvolvimento de Hugo na escola.
         </p>
 
@@ -158,9 +158,9 @@ const ReportsPage = () => {
           </Select>
         </div>
 
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle className="text-xl text-blue-800">Relatórios</CardTitle>
+        <Card className="w-full shadow-lg border-2 border-appBlueSecondary/20">
+          <CardHeader className="bg-gradient-to-r from-appBluePrimary to-appBlueSecondary text-white rounded-t-lg">
+            <CardTitle className="text-xl">Relatórios</CardTitle>
           </CardHeader>
           <CardContent>
             {filteredAndSortedReports.length > 0 ? (
@@ -192,7 +192,7 @@ const ReportsPage = () => {
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-xs">
         <Button
           onClick={() => setIsAddReportDialogOpen(true)}
-          className="w-full h-14 bg-appBlueMedium hover:bg-appBlueDark text-white text-lg flex items-center justify-center rounded-full shadow-lg gap-2"
+          className="w-full h-14 bg-appPuzzleGreen hover:bg-green-600 text-white text-lg flex items-center justify-center rounded-full shadow-xl gap-2 transition-all hover:scale-105"
         >
           <PlusCircle className="h-6 w-6" />
           Adicionar Relatório
