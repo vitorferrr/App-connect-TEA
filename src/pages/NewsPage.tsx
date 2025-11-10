@@ -21,6 +21,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils"; // Import cn for conditional class names
 
 interface NewsArticle {
   id: string;
@@ -65,6 +66,20 @@ const NewsPage = () => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  const headerColors = [
+    "bg-appBluePrimary",
+    "bg-appPuzzleGreen",
+    "bg-appBlueSecondary",
+    "bg-appPuzzleRed",
+  ];
+
+  const borderColors = [
+    "border-appBluePrimary/30",
+    "border-appPuzzleGreen/30",
+    "border-appBlueSecondary/30",
+    "border-appPuzzleRed/30",
+  ];
+
   const handleReadMore = (article: NewsArticle) => {
     setSelectedArticle(article);
     setIsDialogOpen(true);
@@ -86,20 +101,26 @@ const NewsPage = () => {
           Mantenha-se atualizado com as últimas notícias e informações sobre o autismo.
         </p>
 
-        {newsArticles.map((article) => (
-          <Card key={article.id} className="w-full shadow-lg border-2 border-appBlueSecondary/20 hover:border-appPuzzleYellow transition-all">
-            <CardHeader className="bg-gradient-to-r from-appBlueSecondary to-appBluePrimary text-white rounded-t-lg">
-              <CardTitle className="text-xl">{article.title}</CardTitle>
-              <CardDescription className="text-sm text-blue-100">{article.date}</CardDescription>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <p className="text-gray-700 mb-4">{article.summary}</p>
-              <Button onClick={() => handleReadMore(article)} className="w-full bg-appBluePrimary hover:bg-appAccent text-white transition-all hover:scale-105">
-                Leia Mais
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+        {newsArticles.map((article, index) => {
+          const colorIndex = index % headerColors.length;
+          const headerBgClass = headerColors[colorIndex];
+          const cardBorderClass = borderColors[colorIndex];
+
+          return (
+            <Card key={article.id} className={cn("w-full shadow-lg border-2 transition-all hover:scale-[1.02]", cardBorderClass)}>
+              <CardHeader className={cn("text-white rounded-t-lg", headerBgClass)}>
+                <CardTitle className="text-xl">{article.title}</CardTitle>
+                <CardDescription className="text-sm text-blue-100">{article.date}</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <p className="text-gray-700 mb-4">{article.summary}</p>
+                <Button onClick={() => handleReadMore(article)} className="w-full bg-appBluePrimary hover:bg-appAccent text-white transition-all hover:scale-105">
+                  Leia Mais
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
       </main>
 
       <BottomNavBar />
