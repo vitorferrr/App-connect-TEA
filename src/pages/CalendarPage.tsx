@@ -22,6 +22,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // Import Select components
 
 interface Activity {
   id: string;
@@ -37,7 +44,8 @@ const CalendarPage = () => {
   const [newActivityTitle, setNewActivityTitle] = useState("");
   const [newActivityDescription, setNewActivityDescription] = useState("");
   const [newActivityLocation, setNewActivityLocation] = useState(""); // Novo estado
-  const [newActivityTime, setNewActivityTime] = useState("");         // Novo estado
+  const [newActivityHour, setNewActivityHour] = useState("09"); // Novo estado para hora
+  const [newActivityMinute, setNewActivityMinute] = useState("00"); // Novo estado para minuto
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const formatDateKey = (d: Date | undefined): string => {
@@ -60,7 +68,7 @@ const CalendarPage = () => {
       toast.error("O título da atividade não pode ser vazio.");
       return;
     }
-    if (!newActivityTime.trim()) {
+    if (!newActivityHour || !newActivityMinute) {
       toast.error("O horário da atividade não pode ser vazio.");
       return;
     }
@@ -70,7 +78,7 @@ const CalendarPage = () => {
       title: newActivityTitle.trim(),
       description: newActivityDescription.trim(),
       location: newActivityLocation.trim(), // Incluir local
-      time: newActivityTime.trim(),         // Incluir horário
+      time: `${newActivityHour}:${newActivityMinute}`, // Combinar hora e minuto
     };
 
     setActivities((prevActivities) => ({
@@ -81,7 +89,8 @@ const CalendarPage = () => {
     setNewActivityTitle("");
     setNewActivityDescription("");
     setNewActivityLocation(""); // Resetar local
-    setNewActivityTime("");     // Resetar horário
+    setNewActivityHour("09"); // Resetar hora
+    setNewActivityMinute("00"); // Resetar minuto
     setIsDialogOpen(false);
     toast.success("Atividade adicionada com sucesso!");
   };
@@ -97,6 +106,15 @@ const CalendarPage = () => {
     }));
     toast.success("Atividade removida.");
   };
+
+  // Generate options for hours (00-23)
+  const hourOptions = Array.from({ length: 24 }, (_, i) =>
+    String(i).padStart(2, "0")
+  );
+  // Generate options for minutes (00-59)
+  const minuteOptions = Array.from({ length: 60 }, (_, i) =>
+    String(i).padStart(2, "0")
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
@@ -186,13 +204,32 @@ const CalendarPage = () => {
                       <Label htmlFor="time" className="text-right">
                         Horário
                       </Label>
-                      <Input
-                        id="time"
-                        type="time" // Tipo time para facilitar a entrada
-                        value={newActivityTime}
-                        onChange={(e) => setNewActivityTime(e.target.value)}
-                        className="col-span-3"
-                      />
+                      <div className="col-span-3 flex gap-2">
+                        <Select onValueChange={setNewActivityHour} value={newActivityHour}>
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="Hora" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {hourOptions.map((hour) => (
+                              <SelectItem key={hour} value={hour}>
+                                {hour}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select onValueChange={setNewActivityMinute} value={newActivityMinute}>
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="Minuto" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {minuteOptions.map((minute) => (
+                              <SelectItem key={minute} value={minute}>
+                                {minute}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
                   <DialogFooter>
