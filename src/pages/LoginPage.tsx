@@ -83,7 +83,7 @@ const LoginPage = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowPassword(!showPassword)} // Alterna a visibilidade
-                className="absolute right-2 top-1/2 -translate-y-1/2 mt-2 h-8 w-8 text-gray-500 hover:bg-transparent"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-gray-500 hover:bg-transparent"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
