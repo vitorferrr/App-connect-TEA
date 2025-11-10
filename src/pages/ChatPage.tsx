@@ -76,6 +76,11 @@ const ChatPage = () => {
 
       {/* Chat Messages Area */}
       <main className="flex-grow p-4 space-y-4 overflow-y-auto">
+        {/* BETA Feature Notice */}
+        <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded-md shadow-sm">
+          <p className="font-bold">Função em BETA</p>
+          <p className="text-sm">Esta função de chat está em fase de testes e pode conter instabilidades.</p>
+        </div>
         {messages.map((msg) => (
           <div
             key={msg.id}
