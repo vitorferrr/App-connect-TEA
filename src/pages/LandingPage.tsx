@@ -1,12 +1,32 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react"; // Importar useState
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { User, Puzzle } from "lucide-react"; // Importando o ícone Puzzle
+import { User, Puzzle } from "lucide-react";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import { supabase } from "@/integrations/supabase/client"; // Importar supabase
+import { toast } from "sonner"; // Importar toast
 
 const LandingPage = () => {
+  const [loading, setLoading] = useState(false); // Adicionar estado de loading
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/home`, // Redireciona para a home após login/cadastro
+      },
+    });
+
+    if (error) {
+      toast.error("Erro ao fazer login com o Google: " + error.message);
+      setLoading(false);
+    }
+    // Supabase lida com o redirecionamento, então não precisamos de navigate aqui em caso de sucesso.
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-appBgLight via-blue-50 to-white p-4">
       <div className="text-center mb-8 relative">
@@ -22,7 +42,7 @@ const LandingPage = () => {
             <User className="h-6 w-6 mr-2" /> Login
           </Button>
         </Link>
-        <GoogleSignInButton>
+        <GoogleSignInButton onClick={handleGoogleSignIn} disabled={loading}> {/* Adicionar onClick e disabled */}
           Conectar com o Google
         </GoogleSignInButton>
         <p className="mt-4 text-center text-sm text-appAccent">
