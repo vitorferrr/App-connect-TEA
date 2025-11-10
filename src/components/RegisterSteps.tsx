@@ -386,7 +386,7 @@ const RegisterSteps = () => {
                   <div
                     className={cn(
                       "w-8 h-8 rounded-full flex items-center justify-center border-2",
-                      s <= step ? "bg-appBluePrimary border-appBluePrimary text-appAccent" : "border-gray-300 text-gray-500"
+                      s <= step ? "bg-appBluePrimary border-appBluePrimary text-black" : "border-gray-300 text-black"
                     )}
                   >
                     {s < step ? <CheckCircle2 className="h-4 w-4" /> : <span className="font-bold">{s}</span>}
