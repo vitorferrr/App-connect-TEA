@@ -21,7 +21,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils"; // Import cn for conditional class names
+import { cn, getRandomAppRandomBgColorClass, getRandomAppRandomBorderColorClass } from "@/lib/utils"; // Importar funções de cor aleatória
 
 interface NewsArticle {
   id: string;
@@ -66,20 +66,6 @@ const NewsPage = () => {
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const headerColors = [
-    "bg-appBluePrimary",
-    "bg-appPuzzleGreen",
-    "bg-appBlueSecondary",
-    "bg-appPuzzleRed",
-  ];
-
-  const borderColors = [
-    "border-appBluePrimary/30",
-    "border-appPuzzleGreen/30",
-    "border-appBlueSecondary/30",
-    "border-appPuzzleRed/30",
-  ];
-
   const handleReadMore = (article: NewsArticle) => {
     setSelectedArticle(article);
     setIsDialogOpen(true);
@@ -101,10 +87,9 @@ const NewsPage = () => {
           Mantenha-se atualizado com as últimas notícias e informações sobre o autismo.
         </p>
 
-        {newsArticles.map((article, index) => {
-          const colorIndex = index % headerColors.length;
-          const headerBgClass = headerColors[colorIndex];
-          const cardBorderClass = borderColors[colorIndex];
+        {newsArticles.map((article) => {
+          const headerBgClass = getRandomAppRandomBgColorClass();
+          const cardBorderClass = getRandomAppRandomBorderColorClass();
 
           return (
             <Card key={article.id} className={cn("w-full shadow-lg border-2 transition-all hover:scale-[1.02]", cardBorderClass)}>

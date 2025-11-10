@@ -70,6 +70,14 @@ export default {
         appPuzzleYellow: "hsl(var(--app-puzzle-yellow))",
         appPuzzleGreen: "hsl(var(--app-puzzle-green))",
         appAccent: "hsl(var(--app-accent))",
+        // Novas Cores da Paleta Randômica
+        appRandom: {
+          red: "hsl(var(--app-random-red))",
+          "dark-blue": "hsl(var(--app-random-dark-blue))",
+          "light-blue": "hsl(var(--app-random-light-blue))",
+          green: "hsl(var(--app-random-green))",
+          yellow: "hsl(var(--app-random-yellow))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

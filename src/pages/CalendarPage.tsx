@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn, getRandomAppRandomBgColorClass, getRandomAppRandomBorderColorClass } from "@/lib/utils"; // Importar funções de cor aleatória
 
 interface Activity {
   id: string;
@@ -47,7 +48,7 @@ const CalendarPage = () => {
   const [newActivityHour, setNewActivityHour] = useState("09");
   const [newActivityMinute, setNewActivityMinute] = useState("00");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [showCustomLocationInput, setShowCustomLocationInput] = useState(false); // Novo estado
+  const [showCustomLocationInput, setShowCustomLocationInput] = useState(false);
 
   const formatDateKey = (d: Date | undefined): string => {
     return d ? format(d, "yyyy-MM-dd") : "";
@@ -63,7 +64,7 @@ const CalendarPage = () => {
   const handleLocationChange = (value: string) => {
     if (value === "custom") {
       setShowCustomLocationInput(true);
-      setNewActivityLocation(""); // Limpa o valor anterior para o usuário digitar
+      setNewActivityLocation("");
     } else {
       setShowCustomLocationInput(false);
       setNewActivityLocation(value);
@@ -79,7 +80,7 @@ const CalendarPage = () => {
       toast.error("O título da atividade não pode ser vazio.");
       return;
     }
-    if (!newActivityLocation.trim()) { // Validação para o campo de local
+    if (!newActivityLocation.trim()) {
       toast.error("O local da atividade não pode ser vazio.");
       return;
     }
@@ -104,7 +105,7 @@ const CalendarPage = () => {
     setNewActivityTitle("");
     setNewActivityDescription("");
     setNewActivityLocation("");
-    setShowCustomLocationInput(false); // Resetar a visibilidade do input customizado
+    setShowCustomLocationInput(false);
     setNewActivityHour("09");
     setNewActivityMinute("00");
     setIsDialogOpen(false);
@@ -123,14 +124,15 @@ const CalendarPage = () => {
     toast.success("Atividade removida.");
   };
 
-  // Generate options for hours (00-23)
   const hourOptions = Array.from({ length: 24 }, (_, i) =>
     String(i).padStart(2, "0")
   );
-  // Generate options for minutes (00-59)
   const minuteOptions = Array.from({ length: 60 }, (_, i) =>
     String(i).padStart(2, "0")
   );
+
+  const calendarCardBgClass = useMemo(() => getRandomAppRandomBgColorClass(), []);
+  const calendarCardBorderClass = useMemo(() => getRandomAppRandomBorderColorClass(), []);
 
   return (
     <div className="min-h-screen flex flex-col bg-appBgLight p-4 pb-20">
@@ -148,8 +150,8 @@ const CalendarPage = () => {
           Gerencie as atividades e rotinas.
         </p>
 
-        <Card className="w-full shadow-lg border-2 border-appPuzzleGreen/30">
-          <CardHeader className="bg-appPuzzleGreen text-white rounded-t-lg">
+        <Card className={cn("w-full shadow-lg border-2", calendarCardBorderClass)}>
+          <CardHeader className={cn("text-white rounded-t-lg", calendarCardBgClass)}>
             <CardTitle className="text-xl">Calendário</CardTitle>
           </CardHeader>
           <CardContent className="flex justify-center">

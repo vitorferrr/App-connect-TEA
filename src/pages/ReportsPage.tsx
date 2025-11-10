@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, PlusCircle, Download, FileTextIcon, ImageIcon } from "lucide-react"; // Adicionado FileTextIcon, ImageIcon
+import { ArrowLeft, PlusCircle, Download, FileTextIcon, ImageIcon } from "lucide-react";
 import BottomNavBar from "@/components/BottomNavBar";
 import {
   Accordion,
@@ -25,7 +25,8 @@ import { ptBR } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AddReportDialog from "@/components/AddReportDialog";
-import { jsPDF } from "jspdf"; // Import jspdf
+import { jsPDF } from "jspdf";
+import { cn, getRandomAppRandomBgColorClass, getRandomAppRandomBorderColorClass } from "@/lib/utils"; // Importar funções de cor aleatória
 
 interface Report {
   id: string;
@@ -33,7 +34,7 @@ interface Report {
   date: string;
   content: string;
   report_type: string;
-  attachments: string[] | null; // Adicionado campo attachments
+  attachments: string[] | null;
 }
 
 // Helper function to parse Brazilian date format, made more robust
@@ -64,10 +65,9 @@ const ReportsPage = () => {
         return;
       }
 
-      // Buscar relatórios, incluindo a nova coluna 'attachments'
       const { data: reportsData, error: reportsError } = await supabase
         .from("reports")
-        .select("*, attachments") // Selecionar attachments
+        .select("*, attachments")
         .eq("user_id", user.id)
         .order("date", { ascending: false });
 
@@ -78,7 +78,6 @@ const ReportsPage = () => {
         setReports(reportsData || []);
       }
 
-      // Buscar nome da criança do perfil
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("child_name")
@@ -87,11 +86,11 @@ const ReportsPage = () => {
 
       if (profileError) {
         console.error("Erro ao carregar nome da criança:", profileError.message);
-        setChildName("da Criança"); // Fallback
+        setChildName("da Criança");
       } else if (profileData?.child_name) {
         setChildName(profileData.child_name);
       } else {
-        setChildName("da Criança"); // Fallback if child_name is null
+        setChildName("da Criança");
       }
 
     } catch (error: any) {
@@ -118,7 +117,6 @@ const ReportsPage = () => {
     let filtered = reportsWithParsedDates;
     const now = new Date();
 
-    // Filter by date range
     if (selectedFilter === "3months") {
       const threeMonthsAgo = subMonths(now, 3);
       filtered = filtered.filter(report => report.parsedDate && isAfter(report.parsedDate, threeMonthsAgo));
@@ -127,12 +125,10 @@ const ReportsPage = () => {
       filtered = filtered.filter(report => report.parsedDate && isAfter(report.parsedDate, sixMonthsAgo));
     }
 
-    // Filter by report type
     if (selectedReportType !== "all") {
       filtered = filtered.filter(report => report.report_type === selectedReportType);
     }
 
-    // Always sort from most recent to oldest
     return filtered.sort((a, b) => {
       if (!a.parsedDate || !b.parsedDate) return 0;
       return b.parsedDate.getTime() - a.parsedDate.getTime();
@@ -156,11 +152,10 @@ const ReportsPage = () => {
     doc.setFontSize(12);
     doc.text(report.content, 14, 68, { maxWidth: 180 });
 
-    // Adicionar anexos ao PDF
     if (report.attachments && report.attachments.length > 0) {
-      let yPos = 100; // Posição inicial para anexos
+      let yPos = doc.internal.getCurrentPageInfo().pageContext.cursorY + 10; // Get current Y position
       doc.setFontSize(14);
-      doc.text("Anexos:", 14, yPos + 10);
+      doc.text("Anexos:", 14, yPos);
       doc.setFontSize(10);
       report.attachments.forEach((url, index) => {
         yPos += 7;
@@ -237,60 +232,63 @@ const ReportsPage = () => {
           <CardContent>
             {filteredAndSortedReports.length > 0 ? (
               <Accordion type="single" collapsible className="w-full">
-                {filteredAndSortedReports.map((report) => (
-                  <AccordionItem key={report.id} value={report.id}>
-                    <AccordionTrigger className="text-left text-base font-medium text-gray-800 hover:no-underline flex justify-between items-center">
-                      <div className="flex flex-col items-start flex-grow">
-                        <span>{report.title || "Sem Título"}</span>
-                        <span className="text-sm text-gray-500 font-normal">
-                          {report.parsedDate ? format(report.parsedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Data Desconhecida"} - {report.report_type || "Tipo Desconhecido"}
-                        </span>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevenir que o acordeão seja acionado
-                          handleDownloadReport(report);
-                        }}
-                        className="text-appPuzzleYellow hover:bg-appPuzzleYellow/20 ml-2"
-                      >
-                        <Download className="h-5 w-5" />
-                      </Button>
-                    </AccordionTrigger>
-                    <AccordionContent className="text-gray-700 text-sm p-2 border-t mt-2 pt-2">
-                      {report.content || "Sem conteúdo."}
-                      {report.attachments && report.attachments.length > 0 && (
-                        <div className="mt-4">
-                          <p className="font-semibold text-gray-800 mb-2">Anexos:</p>
-                          <div className="space-y-2">
-                            {report.attachments.map((attachmentUrl, index) => (
-                              <a
-                                key={index}
-                                href={attachmentUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-blue-600 hover:underline text-sm"
-                              >
-                                {getFileIcon(attachmentUrl)}
-                                {attachmentUrl.split('/').pop()} {/* Exibir nome do arquivo a partir da URL */}
-                              </a>
-                            ))}
-                          </div>
+                {filteredAndSortedReports.map((report) => {
+                  const headerBgClass = getRandomAppRandomBgColorClass();
+                  const itemBorderClass = getRandomAppRandomBorderColorClass();
+                  return (
+                    <AccordionItem key={report.id} value={report.id} className={cn("mt-2 rounded-lg overflow-hidden", itemBorderClass)}>
+                      <AccordionTrigger className={cn("text-left text-base font-medium text-white hover:no-underline flex justify-between items-center p-4", headerBgClass)}>
+                        <div className="flex flex-col items-start flex-grow">
+                          <span>{report.title || "Sem Título"}</span>
+                          <span className="text-sm text-blue-100 font-normal">
+                            {report.parsedDate ? format(report.parsedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Data Desconhecida"} - {report.report_type || "Tipo Desconhecido"}
+                          </span>
                         </div>
-                      )}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownloadReport(report);
+                          }}
+                          className="text-white hover:bg-white/20 ml-2"
+                        >
+                          <Download className="h-5 w-5" />
+                        </Button>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-gray-700 text-sm p-4 border-t bg-white">
+                        {report.content || "Sem conteúdo."}
+                        {report.attachments && report.attachments.length > 0 && (
+                          <div className="mt-4">
+                            <p className="font-semibold text-gray-800 mb-2">Anexos:</p>
+                            <div className="space-y-2">
+                              {report.attachments.map((attachmentUrl, index) => (
+                                <a
+                                  key={index}
+                                  href={attachmentUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-2 text-blue-600 hover:underline text-sm"
+                                >
+                                  {getFileIcon(attachmentUrl)}
+                                  {attachmentUrl.split('/').pop()}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                })}
               </Accordion>
             ) : (
-              <p className="text-center text-gray-500">Nenhum relatório encontrado para o período ou tipo selecionado.</p>
+              <p className="text-center text-gray-500 p-4">Nenhum relatório encontrado para o período ou tipo selecionado.</p>
             )}
           </CardContent>
         </Card>
       </main>
 
-      {/* Floating Add Report Button */}
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-xs">
         <Button
           onClick={() => setIsAddReportDialogOpen(true)}

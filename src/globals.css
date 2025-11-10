@@ -58,6 +58,13 @@
     --app-puzzle-yellow: 45 95% 60%; /* Amarelo quebra-cabeça */
     --app-puzzle-green: 142 69% 50%; /* Verde quebra-cabeça */
     --app-accent: 208 92% 35%; /* Azul escuro para contraste */
+
+    /* Novas Cores da Paleta Randômica */
+    --app-random-red: 357 65% 40%; /* #A6242F */
+    --app-random-dark-blue: 228 50% 23%; /* #1E2759 */
+    --app-random-light-blue: 187 50% 66%; /* #79CFD9 */
+    --app-random-green: 127 50% 43%; /* #38A649 */
+    --app-random-yellow: 47 89% 63%; /* #F2D852 */
   }
 
   .dark {
@@ -105,6 +112,13 @@
     --app-puzzle-yellow: 45 95% 70%;
     --app-puzzle-green: 142 69% 60%;
     --app-accent: 208 92% 45%;
+
+    /* Novas Cores da Paleta Randômica (Modo Escuro - ajustadas para visibilidade) */
+    --app-random-red: 357 65% 50%;
+    --app-random-dark-blue: 228 50% 33%;
+    --app-random-light-blue: 187 50% 76%;
+    --app-random-green: 127 50% 53%;
+    --app-random-yellow: 47 89% 73%;
   }
 }
 
