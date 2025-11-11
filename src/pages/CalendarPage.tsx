@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, PlusCircle, Trash2 } from "lucide-react";
+import { ArrowLeft, PlusCircle, Trash2, Pencil } from "lucide-react"; // Adicionado Pencil
 import BottomNavBar from "@/components/BottomNavBar";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -60,6 +60,7 @@ const CalendarPage = () => {
   const [customHexColor, setCustomHexColor] = useState("#000000"); // Default custom hex color
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showCustomLocationInput, setShowCustomLocationInput] = useState(false);
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null); // Estado para atividade em edição
 
   const formatDateKey = (d: Date | undefined): string => {
     return d ? format(d, "yyyy-MM-dd") : "";
@@ -72,6 +73,18 @@ const CalendarPage = () => {
   const selectedDateKey = useMemo(() => formatDateKey(date), [date]);
   const activitiesForSelectedDate = useMemo(() => activities[selectedDateKey] || [], [activities, selectedDateKey]);
 
+  const resetFormFields = () => {
+    setNewActivityTitle("");
+    setNewActivityDescription("");
+    setNewActivityLocation("");
+    setShowCustomLocationInput(false);
+    setNewActivityHour("09");
+    setNewActivityMinute("00");
+    setSelectedColorOption(predefinedColors[0].value);
+    setCustomHexColor("#000000");
+    setEditingActivity(null); // Resetar a atividade em edição
+  };
+
   const handleLocationChange = (value: string) => {
     if (value === "custom") {
       setShowCustomLocationInput(true);
@@ -82,7 +95,7 @@ const CalendarPage = () => {
     }
   };
 
-  const handleAddActivity = () => {
+  const handleSaveActivity = () => {
     if (!date) {
       toast.error("Selecione uma data para adicionar uma atividade.");
       return;
@@ -102,30 +115,70 @@ const CalendarPage = () => {
 
     const finalActivityColor = selectedColorOption === "custom" ? customHexColor : selectedColorOption;
 
-    const newActivity: Activity = {
-      id: Date.now().toString(),
-      title: newActivityTitle.trim(),
-      description: newActivityDescription.trim(),
-      location: newActivityLocation.trim(),
-      time: `${newActivityHour}:${newActivityMinute}`,
-      color: finalActivityColor, // Adiciona a cor final
-    };
+    if (editingActivity) {
+      // Atualizar atividade existente
+      setActivities((prevActivities) => ({
+        ...prevActivities,
+        [selectedDateKey]: (prevActivities[selectedDateKey] || []).map((act) =>
+          act.id === editingActivity.id
+            ? {
+                ...act,
+                title: newActivityTitle.trim(),
+                description: newActivityDescription.trim(),
+                location: newActivityLocation.trim(),
+                time: `${newActivityHour}:${newActivityMinute}`,
+                color: finalActivityColor,
+              }
+            : act
+        ),
+      }));
+      toast.success("Atividade atualizada com sucesso!");
+    } else {
+      // Adicionar nova atividade
+      const newActivity: Activity = {
+        id: Date.now().toString(),
+        title: newActivityTitle.trim(),
+        description: newActivityDescription.trim(),
+        location: newActivityLocation.trim(),
+        time: `${newActivityHour}:${newActivityMinute}`,
+        color: finalActivityColor,
+      };
 
-    setActivities((prevActivities) => ({
-      ...prevActivities,
-      [selectedDateKey]: [...(prevActivities[selectedDateKey] || []), newActivity],
-    }));
+      setActivities((prevActivities) => ({
+        ...prevActivities,
+        [selectedDateKey]: [...(prevActivities[selectedDateKey] || []), newActivity],
+      }));
+      toast.success("Atividade adicionada com sucesso!");
+    }
 
-    setNewActivityTitle("");
-    setNewActivityDescription("");
-    setNewActivityLocation("");
-    setShowCustomLocationInput(false);
-    setNewActivityHour("09");
-    setNewActivityMinute("00");
-    setSelectedColorOption(predefinedColors[0].value); // Reset color selection
-    setCustomHexColor("#000000"); // Reset custom hex color
+    resetFormFields();
     setIsDialogOpen(false);
-    toast.success("Atividade adicionada com sucesso!");
+  };
+
+  const handleEditActivity = (activity: Activity) => {
+    setEditingActivity(activity);
+    setNewActivityTitle(activity.title);
+    setNewActivityDescription(activity.description);
+    setNewActivityLocation(activity.location);
+    const [hour, minute] = activity.time.split(":");
+    setNewActivityHour(hour);
+    setNewActivityMinute(minute);
+
+    // Determinar se a cor é personalizada ou predefinida
+    const isPredefined = predefinedColors.some(c => c.value === activity.color);
+    if (isPredefined) {
+      setSelectedColorOption(activity.color);
+      setCustomHexColor("#000000"); // Resetar cor personalizada se for predefinida
+    } else {
+      setSelectedColorOption("custom");
+      setCustomHexColor(activity.color);
+    }
+
+    // Verificar se o local é personalizado
+    const isPredefinedLocation = ["Escola", "Casa", "Hospital"].includes(activity.location);
+    setShowCustomLocationInput(!isPredefinedLocation);
+
+    setIsDialogOpen(true);
   };
 
   const handleDeleteActivity = (activityId: string) => {
@@ -191,15 +244,15 @@ const CalendarPage = () => {
               </CardTitle>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-blue-700 hover:text-blue-900">
+                  <Button variant="ghost" size="icon" className="text-blue-700 hover:text-blue-900" onClick={resetFormFields}>
                     <PlusCircle className="h-6 w-6" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
-                    <DialogTitle>Adicionar Atividade</DialogTitle>
+                    <DialogTitle>{editingActivity ? "Editar Atividade" : "Adicionar Atividade"}</DialogTitle>
                     <DialogDescription>
-                      Adicione uma nova atividade para {formatDisplayDate(date)}.
+                      {editingActivity ? `Edite a atividade "${editingActivity.title}" para ${formatDisplayDate(date)}.` : `Adicione uma nova atividade para ${formatDisplayDate(date)}.`}
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
@@ -331,8 +384,8 @@ const CalendarPage = () => {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button type="submit" onClick={handleAddActivity}>
-                      Salvar Atividade
+                    <Button type="submit" onClick={handleSaveActivity}>
+                      {editingActivity ? "Salvar Alterações" : "Salvar Atividade"}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -363,14 +416,24 @@ const CalendarPage = () => {
                           </p>
                         )}
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteActivity(activity.id)}
-                        className="text-white hover:text-red-300"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditActivity(activity)}
+                          className="text-white hover:text-blue-300"
+                        >
+                          <Pencil className="h-5 w-5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteActivity(activity.id)}
+                          className="text-white hover:text-red-300"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </Button>
+                      </div>
                     </li>
                   ))}
                 </ul>
