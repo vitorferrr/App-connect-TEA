@@ -3,7 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail, Phone, Settings, LogOut, Eye, EyeOff } from "lucide-react";
+import {
+  ArrowLeft,
+  Mail,
+  Phone,
+  Settings,
+  LogOut,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import BottomNavBar from "@/components/BottomNavBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -29,19 +37,26 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
 
       if (userError || !user) {
-        toast.error("Erro ao carregar informações do usuário. Por favor, faça login novamente.");
+        toast.error(
+          "Erro ao carregar informações do usuário. Por favor, faça login novamente."
+        );
         navigate("/login");
         setLoading(false);
         return;
       }
 
       const { data, error } = await supabase
-        .from('profiles')
-        .select('first_name, last_name, user_type, phone_number, avatar_url, updated_at') // Selecionar updated_at
-        .eq('id', user.id)
+        .from("profiles")
+        .select(
+          "first_name, last_name, user_type, phone_number, avatar_url, updated_at"
+        ) // Selecionar updated_at
+        .eq("id", user.id)
         .single();
 
       if (error) {
@@ -74,8 +89,19 @@ const ProfilePage = () => {
     setLoading(false);
   };
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  const getInitials = (firstName?: string | null, lastName?: string | null) => {
+    const safeFirst = (firstName ?? "").trim();
+    const safeLast = (lastName ?? "").trim();
+
+    // Se não tiver nada, devolve um "?"
+    if (!safeFirst && !safeLast) {
+      return "?";
+    }
+
+    const firstInitial = safeFirst ? safeFirst.charAt(0).toUpperCase() : "";
+    const lastInitial = safeLast ? safeLast.charAt(0).toUpperCase() : "";
+
+    return `${firstInitial}${lastInitial}` || "?";
   };
 
   if (loading) {
@@ -95,8 +121,8 @@ const ProfilePage = () => {
   }
 
   // Adiciona o parâmetro de cache-busting ao URL do avatar
-  const avatarSrcWithCacheBusting = profile.avatar_url 
-    ? `${profile.avatar_url}?t=${new Date(profile.updated_at).getTime()}` 
+  const avatarSrcWithCacheBusting = profile.avatar_url
+    ? `${profile.avatar_url}?t=${new Date(profile.updated_at).getTime()}`
     : undefined;
 
   return (
@@ -118,18 +144,27 @@ const ProfilePage = () => {
         <Card className="w-full p-6 flex flex-col items-center shadow-md">
           <Avatar className="h-24 w-24 mb-4 bg-blue-600 text-white text-3xl font-bold flex items-center justify-center">
             {avatarSrcWithCacheBusting ? (
-              <AvatarImage src={avatarSrcWithCacheBusting} alt="Avatar do Usuário" />
+              <AvatarImage
+                src={avatarSrcWithCacheBusting}
+                alt="Avatar do Usuário"
+              />
             ) : (
-              <AvatarFallback>{getInitials(profile.first_name, profile.last_name)}</AvatarFallback>
+              <AvatarFallback>
+                {getInitials(profile.first_name, profile.last_name)}
+              </AvatarFallback>
             )}
           </Avatar>
-          <h2 className="text-xl font-semibold text-gray-800">{profile.first_name} {profile.last_name}</h2>
+          <h2 className="text-xl font-semibold text-gray-800">
+            {profile.first_name} {profile.last_name}
+          </h2>
           <p className="text-sm text-gray-500">{profile.user_type}</p>
         </Card>
 
         {/* Personal Information Card */}
         <Card className="w-full p-6 shadow-md">
-          <CardTitle className="text-lg font-semibold text-gray-800 mb-4">Informações pessoais</CardTitle>
+          <CardTitle className="text-lg font-semibold text-gray-800 mb-4">
+            Informações pessoais
+          </CardTitle>
           <CardContent className="p-0 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -147,14 +182,20 @@ const ProfilePage = () => {
                 onClick={() => setShowEmail(!showEmail)}
                 className="text-gray-500 hover:text-gray-700"
               >
-                {showEmail ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showEmail ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
               </Button>
             </div>
             <div className="flex items-center">
               <Phone className="h-5 w-5 text-blue-600 mr-3" />
               <div>
                 <p className="text-sm text-gray-600">Telefone</p>
-                <p className="font-medium text-gray-800">{profile.phone_number || "Não informado"}</p>
+                <p className="font-medium text-gray-800">
+                  {profile.phone_number || "Não informado"}
+                </p>
               </div>
             </div>
           </CardContent>
